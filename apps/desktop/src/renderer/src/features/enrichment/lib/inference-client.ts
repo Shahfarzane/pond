@@ -120,6 +120,42 @@ let workerBroken = false;
 let workerEverStarted = false;
 let nextId = 1;
 const pending = new Map<number, Pending>();
+let idleTimer: ReturnType<typeof setTimeout> | null = null;
+let releaseWhenIdle = false;
+
+export function releaseIdleInferenceWorker(): void {
+  releaseWhenIdle = true;
+  if (pending.size > 0) return;
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = null;
+  releaseWhenIdle = false;
+  const current = worker;
+  if (!current) return;
+  const id = nextId++;
+  const finish = (): void => {
+    if (pending.size === 0 && worker === current) {
+      current.terminate();
+      worker = null;
+      releaseWhenIdle = false;
+    }
+  };
+  pending.set(id, { resolve: finish, reject: finish });
+  try {
+    current.postMessage({ id, op: "dispose" } satisfies InferenceRequest);
+  } catch {
+    pending.delete(id);
+    finish();
+  }
+}
+
+function scheduleIdleRelease(): void {
+  if (pending.size > 0 || !worker) return;
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = setTimeout(
+    releaseIdleInferenceWorker,
+    releaseWhenIdle ? 0 : 15_000,
+  );
+}
 
 function failAllPending(error: Error): void {
   for (const p of pending.values()) p.reject(error);
@@ -140,6 +176,7 @@ function ensureWorker(): Worker | null {
       pending.delete(msg.id);
       if (msg.ok) p.resolve(msg.result);
       else p.reject(new Error(msg.error));
+      scheduleIdleRelease();
     };
     w.onerror = (event) => {
       console.error("[inference] worker crashed", event.message);
@@ -147,6 +184,8 @@ function ensureWorker(): Worker | null {
       worker?.terminate();
       worker = null;
       failAllPending(new Error("inference worker crashed"));
+      if (idleTimer) clearTimeout(idleTimer);
+      idleTimer = null;
     };
     worker = w;
     workerEverStarted = true;
@@ -172,16 +211,30 @@ function callWorker<T extends InferenceResult>(
   msg: RequestBody,
   transfer: Transferable[],
 ): Promise<T> {
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = null;
   const w = ensureWorker();
   if (!w) return Promise.reject(new Error("inference worker unavailable"));
   const id = nextId++;
   return new Promise<T>((resolve, reject) => {
     pending.set(id, {
-      resolve: (value) => resolve(result.parse(value)),
+      resolve: (value) => {
+        try {
+          resolve(result.parse(value));
+        } catch (error) {
+          reject(error);
+        }
+      },
       reject,
     });
     const request: InferenceRequest = { id, ...msg };
-    w.postMessage(request, transfer);
+    try {
+      w.postMessage(request, transfer);
+    } catch (error) {
+      pending.delete(id);
+      scheduleIdleRelease();
+      reject(error);
+    }
   });
 }
 
