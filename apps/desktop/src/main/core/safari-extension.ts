@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { shell } from "electron";
@@ -10,6 +11,8 @@ import type {
 } from "../../shared/query-contracts-shared";
 
 const execFileAsync = promisify(execFile);
+
+const requireNative = createRequire(import.meta.url);
 
 /**
  * Runs a command the way `execFile` does: resolves with what it printed, or rejects with
@@ -27,12 +30,20 @@ const runCommand: RunCommand = async (command, args) => {
   return { stdout, stderr };
 };
 
+/** `safari-settings.node`, built from `apps/extension/safari/safari-settings.m`. */
+export interface SafariSettingsModule {
+  /** Opens Safari's settings at the extension, or rejects with Safari's error. */
+  showPreferences(identifier: string): Promise<void>;
+}
+
 /** What the Safari checks read from the running process; tests pass their own. */
 interface SafariExtensionDeps {
   platform?: NodeJS.Platform;
   /** The app's `Contents/Resources`. */
   resourcesPath?: string;
   run?: RunCommand;
+  /** The settings module, or null for a build without one. */
+  settings?: SafariSettingsModule | null;
 }
 
 /** Safari's own UTI for web extensions; the only plug-in type this module looks at. */
@@ -243,26 +254,61 @@ export async function safariExtensionStatus(
   };
 }
 
-/** Where `build-safari-extension.mjs` puts the settings helper. */
-function settingsHelper(): string {
-  const resources = process.resourcesPath;
-  if (!resources) return "";
-  return join(resources, "bin", "pond-safari-settings");
+/** Gives the dialog a way out if Safari never calls back. */
+const SETTINGS_TIMEOUT_MS = 15_000;
+
+/**
+ * The settings module electron-builder copies to `Contents/Resources`. Safari answers
+ * `SFSafariApplication` only for the main process of the app that holds the extension; a
+ * helper executable gets `SFErrorNoExtensionFound` from anywhere in the bundle. So the call
+ * runs here, in Electron's main process, through a Node-API module.
+ */
+function loadSettingsModule(
+  resources: string | undefined,
+): SafariSettingsModule | null {
+  if (!resources) return null;
+  const path = join(resources, "safari-settings.node");
+  if (!existsSync(path)) return null;
+  try {
+    /** SAFETY: safari-settings.m exports exactly `showPreferences(identifier): Promise<void>`. */
+    return requireNative(path) as SafariSettingsModule;
+  } catch (cause) {
+    log.warn("[pond safari] could not load the settings module", path, cause);
+    return null;
+  }
+}
+
+/** Rejects when Safari has not answered in time, so the dialog never waits forever. */
+async function answeredInTime(request: Promise<void>): Promise<void> {
+  let timer: NodeJS.Timeout | undefined;
+  try {
+    await Promise.race([
+      request,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(
+          () => reject(new Error("Safari did not answer")),
+          SETTINGS_TIMEOUT_MS,
+        );
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 /**
  * Opens Safari's settings at Pond's extension.
  *
- * `SFSafariApplication.showPreferencesForExtension` is the only supported way in; it is
- * reached through a small signed helper because Electron cannot call it directly. Safari
- * refuses the call when it does not list the extension — which is exactly the case a
+ * `SFSafariApplication.showPreferencesForExtension` is the only supported way in. Safari
+ * also refuses the call when it does not list the extension — which is exactly the case a
  * locally built, ad-hoc signed copy hits — so the failure is reported with the reason
  * instead of silently opening Safari's start page.
  */
 export async function openSafariSettings(
   status: SafariExtensionStatus,
+  deps: SafariExtensionDeps = {},
 ): Promise<OpenSafariResult> {
-  if (process.platform !== "darwin") {
+  if ((deps.platform ?? process.platform) !== "darwin") {
     return {
       ok: false,
       reason: "unsupported",
@@ -277,8 +323,11 @@ export async function openSafariSettings(
     };
   }
 
-  const helper = settingsHelper();
-  if (!helper || !existsSync(helper)) {
+  const settings =
+    deps.settings === undefined
+      ? loadSettingsModule(deps.resourcesPath ?? process.resourcesPath)
+      : deps.settings;
+  if (!settings) {
     return {
       ok: false,
       reason: "helper-missing",
@@ -286,20 +335,20 @@ export async function openSafariSettings(
     };
   }
 
-  const args = [status.bundleId];
   try {
-    await execFileAsync(helper, args, { timeout: 15_000 });
+    await answeredInTime(settings.showPreferences(status.bundleId));
     return { ok: true };
   } catch (cause) {
-    const { stderr } = captureOf(cause);
-    const detail = stderr.trim();
-    log.warn("[pond safari] settings helper failed", helper, detail, cause);
+    log.warn("[pond safari] Safari did not open the settings", cause);
     /** An ad-hoc build is refused for the signature reason, so point at that setting. */
     return {
       ok: false,
       reason:
         status.signature === "ad-hoc" ? "unsigned-build" : "safari-refused",
-      error: detail || "Safari did not open Pond's extension settings.",
+      error:
+        cause instanceof Error
+          ? cause.message
+          : "Safari did not open Pond's extension settings.",
     };
   }
 }

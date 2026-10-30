@@ -1,10 +1,13 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  openSafariSettings,
   parsePluginkit,
   type RunCommand,
+  type SafariExtensionStatus,
+  type SafariSettingsModule,
   safariExtensionStatus,
 } from "./safari-extension";
 
@@ -99,10 +102,10 @@ TeamIdentifier=not set`;
 const UNSIGNED_REPORT =
   "Pond Extension.appex: code object is not signed at all";
 
-/** Rejects the way `execFile` does when a command exits non-zero or is killed. */
-function failure(stderr: string, code: number | null = 1): Error {
+/** Rejects the way `execFile` does when a command exits non-zero. */
+function failure(stderr: string): Error {
   return Object.assign(new Error(`Command failed\n${stderr}`), {
-    code,
+    code: 1,
     stdout: "",
     stderr,
   });
@@ -133,8 +136,11 @@ function commands(replies: Record<string, Reply>) {
 
 const roots: string[] = [];
 
-/** A Pond.app on disk with the appex in Contents/PlugIns. */
-function packagedApp() {
+/**
+ * A Pond.app on disk with the appex in Contents/PlugIns and, when given, these bytes as
+ * `Contents/Resources/safari-settings.node`.
+ */
+function packagedApp({ settingsModule }: { settingsModule?: string } = {}) {
   const root = mkdtempSync(join(tmpdir(), "pond-safari-"));
   roots.push(root);
   const contents = join(root, "Pond.app", "Contents");
@@ -142,7 +148,25 @@ function packagedApp() {
   mkdirSync(appex, { recursive: true });
   writeFileSync(join(appex, "Info.plist"), INFO_PLIST);
   mkdirSync(join(contents, "Resources"), { recursive: true });
+  if (settingsModule !== undefined) {
+    writeFileSync(
+      join(contents, "Resources", "safari-settings.node"),
+      settingsModule,
+    );
+  }
   return { resourcesPath: join(contents, "Resources") };
+}
+
+/** Stands in for safari-settings.node, answering every request the same way. */
+function settingsModule(answer: () => Promise<void>) {
+  const requests: string[] = [];
+  const settings: SafariSettingsModule = {
+    async showPreferences(identifier) {
+      requests.push(identifier);
+      return answer();
+    },
+  };
+  return { settings, requests };
 }
 
 afterEach(() => {
@@ -211,5 +235,79 @@ describe("safariExtensionStatus", () => {
       await safariExtensionStatus({ platform: "win32", resourcesPath, run }),
     ).toEqual({ state: "not_bundled", bundleId: null, signature: "unknown" });
     expect(calls).toEqual([]);
+  });
+});
+
+const DISABLED: SafariExtensionStatus = {
+  state: "disabled",
+  bundleId: BUNDLE_ID,
+  signature: "developer-id",
+};
+
+describe("openSafariSettings", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("asks Safari for the appex's own bundle ID", async () => {
+    const { settings, requests } = settingsModule(async () => {});
+    expect(
+      await openSafariSettings(DISABLED, { platform: "darwin", settings }),
+    ).toEqual({ ok: true });
+    expect(requests).toEqual([BUNDLE_ID]);
+  });
+
+  it("reports a build without the settings module", async () => {
+    const { resourcesPath } = packagedApp();
+    const result = await openSafariSettings(DISABLED, {
+      platform: "darwin",
+      resourcesPath,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "helper-missing" });
+  });
+
+  it("treats a module that will not load as missing", async () => {
+    const { resourcesPath } = packagedApp({
+      settingsModule: "not a Mach-O bundle",
+    });
+    const result = await openSafariSettings(DISABLED, {
+      platform: "darwin",
+      resourcesPath,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "helper-missing" });
+  });
+
+  it("gives up when Safari never answers", async () => {
+    vi.useFakeTimers();
+    const { settings } = settingsModule(() => new Promise(() => {}));
+    const pending = openSafariSettings(DISABLED, {
+      platform: "darwin",
+      settings,
+    });
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect(await pending).toMatchObject({
+      ok: false,
+      reason: "safari-refused",
+    });
+  });
+
+  it("does nothing for a build without the appex", async () => {
+    const { settings, requests } = settingsModule(async () => {});
+    const result = await openSafariSettings(
+      { state: "not_bundled", bundleId: null, signature: "unknown" },
+      { platform: "darwin", settings },
+    );
+    expect(result).toMatchObject({ ok: false, reason: "not-bundled" });
+    expect(requests).toEqual([]);
+  });
+
+  it("does nothing off macOS", async () => {
+    const { settings, requests } = settingsModule(async () => {});
+    const result = await openSafariSettings(DISABLED, {
+      platform: "linux",
+      settings,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "unsupported" });
+    expect(requests).toEqual([]);
   });
 });
