@@ -1,8 +1,11 @@
+import { dirname, join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import {
   createWindowsUserSidResolver,
+  nativeInboxPath,
   nativeSocketPath,
   parseWindowsUserSid,
+  safariInboxPath,
   safariSocketPath,
   WINDOWS_SID_LOOKUP_TIMEOUT_MS,
   windowsNativePipePath,
@@ -107,5 +110,34 @@ describe("safariSocketPath", () => {
     expect(
       safariSocketPath("/Users/someone-with-a-long-name").length,
     ).toBeLessThan(104);
+  });
+});
+
+describe("nativeInboxPath", () => {
+  it("sits beside the macOS socket the native host connects to", async () => {
+    const socket = await nativeSocketPath("darwin", undefined, undefined);
+    expect(nativeInboxPath("darwin", undefined)).toBe(
+      join(dirname(socket), "Inbox"),
+    );
+  });
+
+  it("follows a sandbox, like the socket does", async () => {
+    expect(nativeInboxPath("darwin", "/tmp/sandbox")).toBe(
+      join("/tmp/sandbox", "Inbox"),
+    );
+  });
+
+  it("uses Pond's roaming app data folder on Windows", () => {
+    expect(
+      nativeInboxPath("win32", undefined, "C:\\Users\\koi\\AppData\\Roaming"),
+    ).toBe(join("C:\\Users\\koi\\AppData\\Roaming", "Pond", "Inbox"));
+  });
+});
+
+describe("safariInboxPath", () => {
+  it("sits in the App Group container the Safari extension can write", () => {
+    expect(safariInboxPath("/Users/koi")).toBe(
+      "/Users/koi/Library/Group Containers/7VFLYD5292.so.pond/Inbox",
+    );
   });
 });

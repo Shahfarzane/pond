@@ -14,6 +14,9 @@ export const SAFARI_APP_GROUP = "7VFLYD5292.so.pond";
 /** Share extension drop folder inside the App Group container; keep in lockstep with `PondSocket.swift`. */
 export const SHARE_INBOX_DIR = "Share Inbox";
 
+/** Where a native host leaves saves while Pond is closed; keep in lockstep with `pond-native-host.c` and `SafariWebExtensionHandler.swift`. */
+export const NATIVE_INBOX_DIR = "Inbox";
+
 /** Pinned by `manifest.key` in unpacked builds; native-host `allowed_origins` must match. */
 export const EXTENSION_ID = "ihciihlcdkopghlpabpmnodncfdboplb";
 

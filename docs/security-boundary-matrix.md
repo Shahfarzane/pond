@@ -9,7 +9,7 @@ Pond stores Library data in plaintext and has no Library password or locked stat
 | Local HTTP API | Require the local token and validate requests; retain preview tokens for reviewed mutations | HTTP route and operation tests |
 | MCP | Respect configured access capabilities and use reviewed mutation operations | MCP and Agent operation access tests |
 | Agent | Restrict discoverable operations and review mutations before execution | Agent review and replay-prevention tests |
-| Native host | Validate framed messages and retain local socket permissions | Native RPC, framing, and server tests |
+| Native host | Validate framed messages and retain local socket permissions; from the offline inbox, dispatch only saves, without cookies, and read only regular files inside it | Native RPC, framing, server, native host, and offline inbox tests |
 | Auxiliary windows | Validate the Save before opening, scope control messages to the owning window, and close during Library transitions | Preview-window tests |
 | Imports | Validate paths and preserve supported external representations | Import and package fixtures |
 | Exports | Write plaintext packages and files only to the requested export destination | Package and export tests |

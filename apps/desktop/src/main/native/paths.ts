@@ -3,7 +3,11 @@ import { createHash } from "node:crypto";
 import { homedir } from "node:os";
 import { join, posix } from "node:path";
 import { promisify } from "node:util";
-import { SAFARI_APP_GROUP, SHARE_INBOX_DIR } from "@pond/schema/native";
+import {
+  NATIVE_INBOX_DIR,
+  SAFARI_APP_GROUP,
+  SHARE_INBOX_DIR,
+} from "@pond/schema/native";
 
 const WINDOWS_SID = /^S-\d+(?:-\d+)+$/;
 export const WINDOWS_SID_LOOKUP_TIMEOUT_MS = 3_000;
@@ -91,6 +95,28 @@ export function shareInboxPath(home: string = homedir()): string {
     SAFARI_APP_GROUP,
     SHARE_INBOX_DIR,
   );
+}
+
+/** Safari extension offline inbox; keep in lockstep with `SafariWebExtensionHandler.swift`. */
+export function safariInboxPath(home: string = homedir()): string {
+  return posix.join(
+    home,
+    "Library/Group Containers",
+    SAFARI_APP_GROUP,
+    NATIVE_INBOX_DIR,
+  );
+}
+
+/** Chrome native-host offline inbox, beside its socket; keep in lockstep with `pond-native-host.c`. */
+export function nativeInboxPath(
+  platform: NodeJS.Platform = process.platform,
+  sandbox: string | undefined = process.env.POND_SANDBOX,
+  appData: string = process.env.APPDATA ??
+    join(homedir(), "AppData", "Roaming"),
+): string {
+  if (sandbox) return join(sandbox, NATIVE_INBOX_DIR);
+  if (platform === "win32") return join(appData, "Pond", NATIVE_INBOX_DIR);
+  return join(homedir(), "Library/Application Support/Pond", NATIVE_INBOX_DIR);
 }
 
 /** Chrome native-host connect path; keep in lockstep with `pond-native-host.c`. */

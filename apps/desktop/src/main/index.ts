@@ -78,7 +78,12 @@ import { resolveLogFile } from "./logging";
 import { installAppMenu, setMenuRecents } from "./menu";
 import { openAppGroupContainer } from "./native/app-group";
 import { writeNativeHostManifests } from "./native/manifests";
-import { safariSocketPath } from "./native/paths";
+import { startOfflineInbox } from "./native/offline-inbox";
+import {
+  nativeInboxPath,
+  safariInboxPath,
+  safariSocketPath,
+} from "./native/paths";
 import { startNativeServer, stopNativeServer } from "./native/server";
 import { flushOpenFiles, queueOpenFile } from "./open-files";
 import { libraryRoot, type PondPaths, resolvePaths } from "./paths";
@@ -157,6 +162,7 @@ const initialDeepLink = deepLinkArg(process.argv);
 
 let nativeServer: NetServer | null = null;
 let safariServer: NetServer | null = null;
+const stopInboxes: (() => void)[] = [];
 let stopMediaWarmer: (() => void) | null = null;
 
 let signalRendererReady: (() => void) | null = null;
@@ -378,6 +384,12 @@ async function postLaunchInit(): Promise<void> {
   } catch (err) {
     log.error("[pond] native host failed to start", err);
   }
+  /** Saves the browser made while Pond was closed; drained after the socket is up. */
+  try {
+    stopInboxes.push(await startOfflineInbox({ path: nativeInboxPath() }));
+  } catch (err) {
+    log.error("[pond] offline inbox failed to start", err);
+  }
   /** Only a signed build carries the App Group entitlement that opens the shared container. */
   if (
     process.platform === "darwin" &&
@@ -392,6 +404,11 @@ async function postLaunchInit(): Promise<void> {
       safariServer = await startNativeServer({ path: safariSocketPath() });
     } catch (err) {
       log.error("[pond] Safari native host failed to start", err);
+    }
+    try {
+      stopInboxes.push(await startOfflineInbox({ path: safariInboxPath() }));
+    } catch (err) {
+      log.error("[pond] Safari offline inbox failed to start", err);
     }
   }
   /** Manifests must keep pointing at the real app, and registration never depends on the socket binding. */
@@ -619,6 +636,7 @@ app.on("before-quit", async (event) => {
   killTrackedProcessTrees();
   closePreviewWindows();
   closeCombineImagesWindow();
+  for (const stop of stopInboxes.splice(0)) stop();
   try {
     await withDeadline(
       Promise.all([
