@@ -1,15 +1,19 @@
+import { createHash } from "node:crypto";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { CaptureReceipt } from "@pond/schema/capture";
+import type { CaptureReceipt, CaptureWebDraft } from "@pond/schema/capture";
 import { saves } from "@pond/schema/db";
 import type { NativeResponse } from "@pond/schema/native";
 import Database from "better-sqlite3";
 import { eq } from "drizzle-orm";
 import { app } from "electron";
+import sharp from "sharp";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { executeBatch } from "../core/executor";
+import { createManualSave } from "../core/manual-import";
 import { enqueue } from "../core/pipeline/enqueue";
+import { undo } from "../core/undo";
 import { closeDb, getDb } from "../db";
 import { invalidatePaths, resolvePaths } from "../paths";
 import { liveNativePorts } from "./ports";
@@ -43,9 +47,10 @@ async function trash(id: string) {
   ]);
 }
 
-/** The extension's Save Page sends `capture.accept`, then polls `capture.status` until it settles. */
-async function savePageFromExtension(
+/** The extension sends `capture.accept`, then polls `capture.status` until it settles. */
+async function saveFromExtension(
   draftId: string,
+  item: CaptureWebDraft["items"][number],
   tags: string[] = [],
 ): Promise<CaptureReceipt> {
   const ports = liveNativePorts();
@@ -55,7 +60,8 @@ async function savePageFromExtension(
       draft: {
         id: draftId,
         trigger: "action",
-        items: [{ kind: "url", url: PAGE, title: "Trash resave" }],
+        originUrl: PAGE,
+        items: [item],
         metadata: { tags, folderIds: [] },
       },
     },
@@ -96,24 +102,62 @@ describe.skipIf(!nativeSqliteAvailable())(
       rmSync(dir, { recursive: true, force: true });
     });
 
-    it("brings the page back to the Library when the extension saves it again", async () => {
-      const first = await savePageFromExtension("first-save");
+    it("restores the page when the extension saves it again", async () => {
+      const page = { kind: "url", url: PAGE, title: "Trash resave" } as const;
+      const first = await saveFromExtension("first-save", page);
       expect(first).toMatchObject({ state: "complete", duplicateCount: 0 });
       const [saveId] = first.saveIds;
       if (!saveId) throw new Error("first save returned no Save");
+      const savedAt = (await row(saveId))?.savedAt;
 
       await trash(saveId);
       expect((await row(saveId))?.deletedAt).toBeInstanceOf(Date);
 
-      const again = await savePageFromExtension("save-again", ["resaved"]);
+      const again = await saveFromExtension("save-again", page, ["resaved"]);
 
-      expect(again.state).toBe("complete");
-      const answered = await row(again.saveIds[0] ?? "");
-      expect(answered?.tags).toContain("resaved");
-      expect(answered?.deletedAt ?? null).toBeNull();
+      expect(again).toMatchObject({
+        state: "complete",
+        saveIds: [saveId],
+        duplicateCount: 0,
+      });
+      const restored = await row(saveId);
+      expect(restored?.deletedAt).toBeNull();
+      expect(restored?.savedAt).toEqual(savedAt);
+      expect(restored?.tags).toContain("resaved");
     });
 
-    it("brings a pasted link back to the Library when it is in Trash", async () => {
+    it("restores an image when the extension saves it again", async () => {
+      const image = "https://example.com/media/trash-resave.png";
+      const file = join(dir, "trash-resave.png");
+      await sharp({
+        create: { width: 8, height: 8, channels: 3, background: "#4b7bec" },
+      })
+        .png()
+        .toFile(file);
+      const first = await createManualSave({
+        source: "web",
+        sourceId: `asset:${createHash("sha256").update(image).digest("hex")}`,
+        url: PAGE,
+        filePaths: [file],
+        fileSourceUrls: [image],
+      });
+      if (!first.ok) throw new Error(first.error);
+      await trash(first.id);
+
+      const again = await saveFromExtension("image-again", {
+        kind: "asset",
+        url: image,
+      });
+
+      expect(again).toMatchObject({
+        state: "complete",
+        saveIds: [first.id],
+        duplicateCount: 0,
+      });
+      expect((await row(first.id))?.deletedAt).toBeNull();
+    });
+
+    it("restores a pasted link as one Undo step", async () => {
       const url = "https://example.com/articles/trash-resave-paste";
       const first = await enqueue(url, { trigger: "user:quickAdd" });
       expect(first.created).toBe(true);
@@ -121,18 +165,24 @@ describe.skipIf(!nativeSqliteAvailable())(
 
       const again = await enqueue(url, { trigger: "user:quickAdd" });
 
-      expect((await row(again.id))?.deletedAt ?? null).toBeNull();
+      expect(again).toEqual({ id: first.id, created: false, restored: true });
+      expect((await row(first.id))?.deletedAt).toBeNull();
+      expect(await undo()).toBe(true);
+      expect((await row(first.id))?.deletedAt).toBeInstanceOf(Date);
     });
 
-    it("keeps a Save in Trash when an account sync lists it again", async () => {
+    it("keeps a Save in Trash when a sync or watch lists it again", async () => {
       const url = "https://example.com/articles/trash-resave-sync";
       const first = await enqueue(url, { trigger: "user:quickAdd" });
       await trash(first.id);
 
-      const again = await enqueue(url, { trigger: "sync:twitter" });
-
-      expect(again).toEqual({ id: first.id, created: false });
-      expect((await row(first.id))?.deletedAt).toBeInstanceOf(Date);
+      for (const trigger of ["sync:twitter", "watch:pinterest"]) {
+        expect(await enqueue(url, { trigger })).toEqual({
+          id: first.id,
+          created: false,
+        });
+        expect((await row(first.id))?.deletedAt).toBeInstanceOf(Date);
+      }
     });
   },
 );
