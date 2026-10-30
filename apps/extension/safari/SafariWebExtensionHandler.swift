@@ -17,6 +17,10 @@
 //  `pond-native-host.c` writes. The sandbox only lets this extension connect inside
 //  the App Group container it shares with Pond, so Pond binds a second socket there.
 //
+//  When Pond is closed, a save (`enqueue` or `capture.accept`) is written to `Inbox/`
+//  in the same container instead, without its cookies, and Pond dispatches it at launch
+//  (`src/main/native/offline-inbox.ts`). Every other request still answers `offline`.
+//
 
 import Foundation
 import SafariServices
@@ -36,6 +40,15 @@ private let log = OSLog(subsystem: "so.pond.desktop.Extension", category: "nativ
 /// Mirrors SAFARI_APP_GROUP in packages/schema/src/native.ts and Pond's entitlements.
 private let appGroup = "7VFLYD5292.so.pond"
 
+/// Mirrors NATIVE_INBOX_DIR in packages/schema/src/native.ts.
+private let inboxDirectory = "Inbox"
+
+/// Requests that save something; only these wait in the inbox while Pond is closed.
+private let queuedTypes: Set<String> = ["enqueue", "capture.accept"]
+
+private let offlineReply = #"{"ok":false,"error":"offline"}"#
+private let queuedReply = #"{"ok":true,"data":{"queued":true}}"#
+
 final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
     func beginRequest(with context: NSExtensionContext) {
         // Safari hands the request over as a single NSExtensionItem whose attachment is
@@ -45,7 +58,7 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
 
         guard let payload = serialize(message),
               let request = payload.data(using: .utf8) else {
-            respond(context, body: #"{"ok":false,"error":"offline"}"#)
+            respond(context, body: offlineReply)
             return
         }
 
@@ -54,8 +67,12 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             return
         }
 
-        let reply = forward(request)
-        respond(context, body: reply ?? #"{"ok":false,"error":"offline"}"#)
+        guard let fd = connectToPond() else {
+            respond(context, body: queue(message) ? queuedReply : offlineReply)
+            return
+        }
+        defer { close(fd) }
+        respond(context, body: exchange(fd, request) ?? offlineReply)
     }
 
     private func serialize(_ message: Any?) -> String? {
@@ -81,18 +98,19 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         return try? JSONSerialization.jsonObject(with: data)
     }
 
-    /// Sends the framing Pond expects and reads one framed reply back.
-    private func forward(_ request: Data) -> String? {
-        guard let socketURL = socketPath() else { return nil }
+    /// Returns a socket connected to Pond, or nil when Pond is not listening.
+    private func connectToPond() -> Int32? {
+        guard let path = socketPath() else { return nil }
         let fd = socket(AF_UNIX, SOCK_STREAM, 0)
         guard fd >= 0 else { return nil }
-        defer { close(fd) }
 
         var address = sockaddr_un()
         address.sun_family = sa_family_t(AF_UNIX)
-        let path = socketURL
         let capacity = MemoryLayout.size(ofValue: address.sun_path)
-        guard path.count < capacity else { return nil }
+        guard path.utf8.count < capacity else {
+            close(fd)
+            return nil
+        }
         withUnsafeMutableBytes(of: &address.sun_path) { raw in
             raw.copyBytes(from: path.utf8)
         }
@@ -104,9 +122,14 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         }
         guard connected == 0 else {
             os_log("connect failed: %{public}d", log: log, type: .debug, errno)
+            close(fd)
             return nil
         }
+        return fd
+    }
 
+    /// Sends the framing Pond expects and reads one framed reply back.
+    private func exchange(_ fd: Int32, _ request: Data) -> String? {
         guard writeFramed(fd, request), let reply = readFramed(fd) else { return nil }
         return String(data: reply, encoding: .utf8)
     }
@@ -117,6 +140,54 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
             .containerURL(forSecurityApplicationGroupIdentifier: appGroup)?
             .appendingPathComponent("native.sock")
             .path
+    }
+
+    /// Mirrors `safariInboxPath` in `src/main/native/paths.ts`.
+    private func inboxURL() -> URL? {
+        FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: appGroup)?
+            .appendingPathComponent(inboxDirectory, isDirectory: true)
+    }
+
+    /// Leaves a save in the inbox for Pond's next launch. Session cookies never reach the
+    /// disk, so a page that needs a signed-in session is saved signed out.
+    private func queue(_ message: Any?) -> Bool {
+        guard var request = message as? [String: Any],
+              let type = request["type"] as? String,
+              queuedTypes.contains(type),
+              let inbox = inboxURL() else { return false }
+        request.removeValue(forKey: "cookies")
+        guard JSONSerialization.isValidJSONObject(request),
+              let body = try? JSONSerialization.data(withJSONObject: request),
+              body.count <= maxMessageBytes else { return false }
+
+        do {
+            try FileManager.default.createDirectory(
+                at: inbox,
+                withIntermediateDirectories: true,
+                attributes: [.posixPermissions: 0o700]
+            )
+        } catch {
+            os_log("inbox unavailable: %{public}@", log: log, type: .error, "\(error)")
+            return false
+        }
+
+        // The millisecond prefix keeps Pond's drain in the order the saves were made.
+        let millis = UInt64(Date().timeIntervalSince1970 * 1000)
+        let name = String(format: "%013llu-%@", millis, UUID().uuidString)
+        let temp = inbox.appendingPathComponent(".\(name).tmp").path
+        let final = inbox.appendingPathComponent("\(name).json").path
+
+        // A hidden temp file renamed into place, so Pond never reads half a save.
+        let fd = open(temp, O_WRONLY | O_CREAT | O_EXCL, 0o600)
+        guard fd >= 0 else { return false }
+        let written = writeAll(fd, body) && fsync(fd) == 0
+        close(fd)
+        guard written, rename(temp, final) == 0 else {
+            unlink(temp)
+            return false
+        }
+        return true
     }
 
     private func writeFramed(_ fd: Int32, _ body: Data) -> Bool {
