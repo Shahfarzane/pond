@@ -99,7 +99,12 @@ describe.skipIf(!nativeSqliteAvailable())(
       closeDb();
       vi.restoreAllMocks();
       invalidatePaths();
-      rmSync(dir, { recursive: true, force: true });
+      try {
+        rmSync(dir, { recursive: true, force: true });
+      } catch (error) {
+        /** Pond keeps `global.db` open until the process ends, and Windows can't delete an open file. */
+        if (process.platform !== "win32") throw error;
+      }
     });
 
     it("restores the page when the extension saves it again", async () => {
