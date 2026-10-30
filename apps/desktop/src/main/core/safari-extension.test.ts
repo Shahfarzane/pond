@@ -102,6 +102,10 @@ TeamIdentifier=not set`;
 const UNSIGNED_REPORT =
   "Pond Extension.appex: code object is not signed at all";
 
+/** Safari's reply when the caller is not the main process of the app holding the extension. */
+const SAFARI_REFUSED =
+  "The operation couldn’t be completed. (SFErrorDomain error 1.)";
+
 /** Rejects the way `execFile` does when a command exits non-zero. */
 function failure(stderr: string): Error {
   return Object.assign(new Error(`Command failed\n${stderr}`), {
@@ -275,6 +279,31 @@ describe("openSafariSettings", () => {
       resourcesPath,
     });
     expect(result).toMatchObject({ ok: false, reason: "helper-missing" });
+  });
+
+  it("keeps Safari's error code out of the message on a signed build", async () => {
+    const { settings } = settingsModule(async () => {
+      throw new Error(SAFARI_REFUSED);
+    });
+    const result = await openSafariSettings(DISABLED, {
+      platform: "darwin",
+      settings,
+    });
+    expect(result).toMatchObject({ ok: false, reason: "safari-refused" });
+    expect(result.ok ? "" : result.error).not.toContain("SFErrorDomain");
+    expect(result.ok ? "" : result.error).not.toContain("unsigned");
+  });
+
+  it("points an ad hoc build at Safari's unsigned extensions setting", async () => {
+    const { settings } = settingsModule(async () => {
+      throw new Error(SAFARI_REFUSED);
+    });
+    const result = await openSafariSettings(
+      { ...DISABLED, signature: "ad-hoc" },
+      { platform: "darwin", settings },
+    );
+    expect(result).toMatchObject({ ok: false, reason: "unsigned-build" });
+    expect(result.ok ? "" : result.error).not.toContain("SFErrorDomain");
   });
 
   it("gives up when Safari never answers", async () => {

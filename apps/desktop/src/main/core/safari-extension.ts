@@ -339,17 +339,22 @@ export async function openSafariSettings(
     await answeredInTime(settings.showPreferences(status.bundleId));
     return { ok: true };
   } catch (cause) {
+    /** Safari's own text reads "SFErrorDomain error 1", which only belongs in the log. */
     log.warn("[pond safari] Safari did not open the settings", cause);
     /** An ad-hoc build is refused for the signature reason, so point at that setting. */
-    return {
-      ok: false,
-      reason:
-        status.signature === "ad-hoc" ? "unsigned-build" : "safari-refused",
-      error:
-        cause instanceof Error
-          ? cause.message
-          : "Safari did not open Pond's extension settings.",
-    };
+    return status.signature === "ad-hoc"
+      ? {
+          ok: false,
+          reason: "unsigned-build",
+          error:
+            "Safari hides extensions from unsigned builds until you allow them in its Developer settings.",
+        }
+      : {
+          ok: false,
+          reason: "safari-refused",
+          error:
+            "Safari didn't open Pond's settings. Turn Pond on in Safari, under Extensions.",
+        };
   }
 }
 
