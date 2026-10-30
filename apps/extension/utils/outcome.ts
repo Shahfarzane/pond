@@ -1,12 +1,13 @@
 import { CaptureReceiptSchema } from "@pond/schema/capture";
-import type { NativeResponse } from "@pond/schema/native";
+import { type NativeResponse, nativeQueuedSchema } from "@pond/schema/native";
 
 export type CaptureStatus =
   | "sending"
   | "saved"
   | "duplicate"
   | "failed"
-  | "offline";
+  | "offline"
+  | "queued";
 
 export type CaptureOutcome =
   | { status: "sending"; id: string }
@@ -17,7 +18,9 @@ export type CaptureOutcome =
       warning?: string;
     }
   | { status: "failed"; id: string; message: string }
-  | { status: "offline"; id: string };
+  | { status: "offline"; id: string }
+  /** Pond was closed, so the native host kept the save for Pond's next launch. */
+  | { status: "queued"; id: string };
 
 const NATIVE_ERRORS = new Map([
   ["unsupported_url", "Pond can't save this page. Try a screenshot instead."],
@@ -54,6 +57,9 @@ export function outcomeFromResponse(
       id,
       message: NATIVE_ERRORS.get(response.error) ?? GENERIC_ERROR,
     };
+  }
+  if (nativeQueuedSchema.safeParse(response.data).success) {
+    return { status: "queued", id };
   }
   const receipt = CaptureReceiptSchema.safeParse(response.data);
   if (!receipt.success) return { status: "sending", id };

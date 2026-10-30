@@ -26,9 +26,13 @@ const HEADINGS = {
   duplicate: "Already in Pond",
   failed: "Couldn't save",
   offline: "Pond isn't running",
+  queued: "Saved",
 } satisfies Record<CaptureStatus, string>;
 
-const OFFLINE_HINT = "Open Pond on your computer, then try again.";
+const HINTS = new Map([
+  ["offline", "Open Pond on your computer, then try again."],
+  ["queued", "Pond will finish it the next time it opens."],
+]);
 
 export type OverlayStore = ReturnType<typeof createOverlayStore>;
 
@@ -49,9 +53,7 @@ export function createOverlayStore() {
   const toast = (input: OverlayToast) => {
     const options = {
       title: HEADINGS[input.status],
-      description:
-        input.message ??
-        (input.status === "offline" ? OFFLINE_HINT : input.title),
+      description: input.message ?? HINTS.get(input.status) ?? input.title,
       timeout: input.status === "sending" ? 0 : TOAST_TIMEOUT_MS,
       data: { status: input.status, saveId: input.saveId },
     };

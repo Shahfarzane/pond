@@ -47,6 +47,7 @@ const BADGES = {
   duplicate: { text: "✓", color: "#1f9d55" },
   failed: { text: "!", color: "#cc3333" },
   offline: { text: "!", color: "#dd9b00" },
+  queued: { text: "✓", color: "#1f9d55" },
 } satisfies Record<
   Exclude<CaptureStatus, "sending">,
   { text: string; color: string }

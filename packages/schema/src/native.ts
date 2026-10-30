@@ -78,6 +78,9 @@ export const nativeErrorSchema = z.object({
   error: z.string(),
 });
 
+/** A native host's answer to a save it left in the inbox because Pond was closed. */
+export const nativeQueuedSchema = z.object({ queued: z.literal(true) });
+
 export const nativeResponseSchema = z.union([
   nativeSuccessSchema,
   nativeErrorSchema,

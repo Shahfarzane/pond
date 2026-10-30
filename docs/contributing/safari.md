@@ -111,6 +111,27 @@ Not verified:
 - **Full-page capture.** The stitching loop in `entrypoints/background/screenshot.ts`
   depends on `captureVisibleTab` rate limits; Safari's differ.
 
+## Saving while Pond is closed
+
+When Pond's socket is missing, the native host (`pond-native-host.c` for Chrome, Edge,
+Brave, and Firefox, the appex handler for Safari) writes an `enqueue` or `capture.accept`
+request to an inbox as one JSON file and answers `{"ok":true,"data":{"queued":true}}`.
+The extension shows the save as kept. Every other request, including the reads behind
+the popup and Ask Where to Save, still answers `offline`.
+
+| Browser | Inbox |
+| --- | --- |
+| Chrome, Edge, Brave, Firefox on macOS | `~/Library/Application Support/Pond/Inbox/` |
+| Chrome, Edge, Brave, Firefox on Windows | `%APPDATA%\Pond\Inbox\` |
+| Safari | `~/Library/Group Containers/7VFLYD5292.so.pond/Inbox/` |
+
+The host drops `cookies` before writing, so a page that needs a signed-in session is
+saved signed out. Each file is written as a dot-prefixed temp file with mode 0600, then
+renamed to `<epoch ms>-<suffix>.json`. Pond drains both inboxes at launch and watches
+them while it runs (`src/main/native/offline-inbox.ts`). It dispatches only saves, oldest
+first, through the same path as the socket, and deletes each file once Pond has
+answered. A file that is not a readable save is deleted without being dispatched.
+
 ## Share extension
 
 The Share extension puts Pond in the system Share menu in Safari, Finder, Preview, and

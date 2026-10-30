@@ -23,6 +23,15 @@ describe("outcomeFromResponse", () => {
     });
   });
 
+  it("reports a save the native host kept while Pond was closed", () => {
+    const outcome = outcomeFromResponse("c1", {
+      ok: true,
+      data: { queued: true },
+    });
+    expect(outcome).toEqual({ status: "queued", id: "c1" });
+    expect(isSettled(outcome)).toBe(true);
+  });
+
   it("turns native error codes into copy", () => {
     const outcome = outcomeFromResponse("c1", {
       ok: false,

@@ -61,11 +61,11 @@ const STORE_URL = import.meta.env.FIREFOX
   ? FIREFOX_ADDONS_URL
   : CHROME_WEB_STORE_URL;
 
+/** Pond is closed but its native host answered, so saves wait for Pond in the inbox. */
+const CLOSED_NOTICE =
+  "Pond is closed. Saves will finish the next time it opens.";
+
 const UNREACHABLE_COPY = {
-  offline: {
-    title: "Pond isn't running",
-    description: "Open Pond on your computer to save from the browser.",
-  },
   host_missing: {
     title: "Pond isn't set up for this browser",
     description:
@@ -86,7 +86,10 @@ const UNREACHABLE_COPY = {
     description:
       "This extension needs a newer version of Pond. Update Pond, then try again.",
   },
-} satisfies Record<NativeUnreachable, { title: string; description: string }>;
+} satisfies Record<
+  Exclude<NativeUnreachable, "offline">,
+  { title: string; description: string }
+>;
 
 interface Command {
   tool: CaptureTool;
@@ -292,7 +295,7 @@ function Commands({ result, refresh, returned, onShortcuts }: CommandsProps) {
     );
   }
 
-  if (result.state === "offline") {
+  if (result.state === "offline" && result.reason !== "offline") {
     const copy = UNREACHABLE_COPY[result.reason];
     return (
       <Shell returned={returned}>
@@ -343,6 +346,11 @@ function Commands({ result, refresh, returned, onShortcuts }: CommandsProps) {
 
   return (
     <Shell returned={returned}>
+      {result.state === "offline" ? (
+        <p className={styles.notice} role="status">
+          {CLOSED_NOTICE}
+        </p>
+      ) : null}
       {tabId === undefined ? (
         <p className={styles.notice} role="status">
           Pond can't capture this page. Open a regular web page to save it.
