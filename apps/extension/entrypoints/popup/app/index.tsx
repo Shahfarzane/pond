@@ -65,6 +65,8 @@ const STORE_URL = import.meta.env.FIREFOX
 const CLOSED_NOTICE =
   "Pond is closed. Saves will finish the next time it opens.";
 
+const KEPT_NOTICE = "Saved. Pond will finish it the next time it opens.";
+
 const UNREACHABLE_COPY = {
   host_missing: {
     title: "Pond isn't set up for this browser",
@@ -282,6 +284,7 @@ function Commands({ result, refresh, returned, onShortcuts }: CommandsProps) {
   const tab = useActiveTab();
   const shortcuts = useShortcuts();
   const [error, setError] = useState<string | null>(null);
+  const [kept, setKept] = useState(false);
 
   if (!result || tab === undefined) {
     return (
@@ -340,15 +343,24 @@ function Commands({ result, refresh, returned, onShortcuts }: CommandsProps) {
         message: "Pond couldn't start this capture. Try again.",
       }),
     );
-    if (outcome.ok) window.close();
-    else setError(outcome.message);
+    if (!outcome.ok) {
+      setError(outcome.message);
+      return;
+    }
+    /** The page may not be able to show Pond's toast, so the panel says it and stays open. */
+    if (outcome.queued) {
+      setError(null);
+      setKept(true);
+      return;
+    }
+    window.close();
   };
 
   return (
     <Shell returned={returned}>
-      {result.state === "offline" ? (
+      {kept || result.state === "offline" ? (
         <p className={styles.notice} role="status">
-          {CLOSED_NOTICE}
+          {kept ? KEPT_NOTICE : CLOSED_NOTICE}
         </p>
       ) : null}
       {tabId === undefined ? (

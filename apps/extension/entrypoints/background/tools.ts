@@ -77,9 +77,16 @@ export async function runTool(
     const draft = pageDraft(tab);
     if (!draft) return { ok: false, message: "Pond can only save web pages." };
     const { toolbar } = await getSettings();
-    if (toolbarSkipsDetails(toolbar)) void saveDraft(draft, tabId);
-    else void offerDraft(draft, tabId);
-    return { ok: true };
+    /**
+     * Waits for the save so the panel can say it was kept for Pond's next launch: a page
+     * that refuses Pond's overlay, such as Safari before site access, only gets the badge.
+     */
+    const outcome = toolbarSkipsDetails(toolbar)
+      ? await saveDraft(draft, tabId)
+      : await offerDraft(draft, tabId);
+    return outcome?.status === "queued"
+      ? { ok: true, queued: true }
+      : { ok: true };
   }
   if (tool === "region") {
     const shown = await showOverlay(tabId, { view: "region" });

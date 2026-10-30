@@ -194,21 +194,27 @@ export async function saveDraft(
   });
 }
 
-/** Opens the details window when the settings ask for it; pages that refuse the overlay save straight away. */
+/**
+ * Opens the details window when the settings ask for it; pages that refuse the overlay
+ * save straight away. Returns the outcome of a save made here, or null when the details
+ * window took the draft.
+ */
 export async function offerDraft(
   draft: DetailsDraft | null,
   tabId: number | undefined,
-): Promise<void> {
+): Promise<CaptureOutcome | null> {
   if (!draft) {
     flashBadge(tabId, "failed");
-    return;
+    return null;
   }
   const { askDetails } = await getSettings();
   if (askDetails && tabId !== undefined) {
     const library = await libraryTargets();
-    if (await showOverlay(tabId, { view: "details", draft, library })) return;
+    if (await showOverlay(tabId, { view: "details", draft, library })) {
+      return null;
+    }
   }
-  await saveDraft(draft, tabId);
+  return saveDraft(draft, tabId);
 }
 
 const SITE_ACTIONS = new Set(["like", "upvote", "bookmark", "star"]);

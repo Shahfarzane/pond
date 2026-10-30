@@ -4,7 +4,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { fakeBrowser } from "wxt/testing/fake-browser";
-import { onMessage } from "@/utils/messaging";
+import { onMessage, type ToolResult } from "@/utils/messaging";
 import type { ProbeResult } from "@/utils/probe";
 import { App } from ".";
 
@@ -13,6 +13,7 @@ Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 let container: HTMLDivElement;
 let root: Root;
 let stopProbe: () => void = () => {};
+let stopTool: () => void = () => {};
 
 beforeEach(async () => {
   fakeBrowser.reset();
@@ -42,6 +43,7 @@ afterEach(async () => {
   await act(async () => root.unmount());
   container.remove();
   stopProbe();
+  stopTool();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
@@ -54,6 +56,16 @@ async function open(result: ProbeResult): Promise<void> {
       container.querySelector('[aria-label="Connecting to Pond"]'),
     ).toBeNull(),
   );
+}
+
+/** Answers the panel's Save Page the way the background does once the save is sent. */
+function answerTool(result: ToolResult) {
+  const tools: string[] = [];
+  stopTool = onMessage("runTool", ({ data }) => {
+    tools.push(data.tool);
+    return result;
+  });
+  return tools;
 }
 
 function button(label: string): HTMLButtonElement | undefined {
@@ -81,4 +93,28 @@ it("shows no notice when Pond is running", async () => {
   await open({ state: "connected", library: { name: "Pond" } });
   expect(container.textContent).not.toContain("Pond is closed");
   expect(button("Save Page")?.disabled).toBe(false);
+});
+
+it("says a save was kept for Pond's next launch, and stays open", async () => {
+  const close = vi.spyOn(window, "close").mockImplementation(() => {});
+  const tools = answerTool({ ok: true, queued: true });
+  await open({ state: "offline", reason: "offline" });
+  await act(async () => button("Save Page")?.click());
+  await vi.waitFor(() =>
+    expect(container.textContent).toContain(
+      "Saved. Pond will finish it the next time it opens.",
+    ),
+  );
+  expect(tools).toEqual(["page"]);
+  expect(container.textContent).not.toContain("Pond is closed");
+  expect(close).not.toHaveBeenCalled();
+});
+
+it("closes once Pond took the save", async () => {
+  const close = vi.spyOn(window, "close").mockImplementation(() => {});
+  answerTool({ ok: true });
+  await open({ state: "connected", library: { name: "Pond" } });
+  await act(async () => button("Save Page")?.click());
+  await vi.waitFor(() => expect(close).toHaveBeenCalled());
+  expect(container.textContent).not.toContain("Saved. Pond will finish");
 });

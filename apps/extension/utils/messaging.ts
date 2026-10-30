@@ -89,7 +89,10 @@ export interface Gesture {
   item: PageItem;
 }
 
-export type ToolResult = { ok: true } | { ok: false; message: string };
+/** `queued` means Pond was closed and the save waits for its next launch. */
+export type ToolResult =
+  | { ok: true; queued?: true }
+  | { ok: false; message: string };
 
 interface PondProtocol {
   capture(payload: PondCapturePayload): CaptureOutcome;
