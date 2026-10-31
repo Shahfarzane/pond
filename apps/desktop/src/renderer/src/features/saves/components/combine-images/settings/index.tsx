@@ -23,8 +23,8 @@ import {
 import type { CombineImagesOptions } from "@shared/combine-images-contracts";
 import type { CombineLayout } from "@shared/combine-images-layout";
 import { type ReactNode, useId, useState } from "react";
+import { clamp } from "@/shared/lib/math";
 import {
-  clamp,
   type Highlight,
   LIMITS,
   QUALITIES,
@@ -238,7 +238,7 @@ export function CombineSettings({
               <ValueSelect
                 label="Quality"
                 items={QUALITIES}
-                value={clamp(options.quality / 5, [2, 20]) * 5}
+                value={clamp(Math.round(options.quality / 5), 2, 20) * 5}
                 onChange={(value) => update("quality", value)}
               />
             </Row>
@@ -369,7 +369,7 @@ function PixelField({
           setDraft(next);
           const parsed = Number(next);
           if (next.trim() !== "" && Number.isFinite(parsed))
-            onCommit(clamp(parsed, limits));
+            onCommit(clamp(Math.round(parsed), ...limits));
         }}
       />
       <Input.Suffix>px</Input.Suffix>

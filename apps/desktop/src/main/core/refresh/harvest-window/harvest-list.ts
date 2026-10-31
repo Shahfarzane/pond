@@ -1,3 +1,4 @@
+import { setTimeout as sleep } from "node:timers/promises";
 import {
   type ImportCollection,
   MEDIA_TYPES,
@@ -82,7 +83,6 @@ import {
 } from "./navigation";
 import { runOnSourcePage } from "./page-run";
 import { leaseWindow } from "./pool";
-import { sleep } from "./util";
 
 interface SourceListArgs extends ListHarvestArgs {
   accountKey?: string;

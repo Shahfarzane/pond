@@ -3,6 +3,7 @@ import { Button, Dialog, Field, Input } from "@pond/ui";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { combineQueries } from "@/features/library/lib/smart-folders";
 import { errorCopy } from "@/shared/lib/error-copy";
+import { formatPlural } from "@/shared/lib/format";
 import {
   compileRuleQuery,
   editableQuery,
@@ -121,7 +122,7 @@ export function RuleDialog(props: RuleDialogProps) {
   const countText = !ready
     ? "Complete the rules to preview matches."
     : preview.key === queryKey && preview.count != null
-      ? `Found ${preview.count.toLocaleString()} ${preview.count === 1 ? "save" : "saves"}`
+      ? `Found ${formatPlural(preview.count, { one: "save", other: "saves" })}`
       : preview.key === queryKey && preview.status === "failed"
         ? "Couldn't count matches. Your rules can still be saved."
         : "Counting matches";

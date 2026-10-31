@@ -11,6 +11,7 @@ import { type DragEvent, useEffect, useMemo, useState } from "react";
 import { ensureSaves } from "@/features/saves/lib/ensure-saves";
 import { savesStore } from "@/features/saves/state/pool";
 import { errorCopy } from "@/shared/lib/error-copy";
+import { formatPlural } from "@/shared/lib/format";
 import { notify } from "@/shared/lib/toast";
 import { type Highlight, readStoredOptions, storeOptions } from "./options";
 import { type CombineImage, Preview } from "./preview";
@@ -128,7 +129,7 @@ export function CombineImages({
         title: exporting ? "Combined Image Exported" : "Combined Image Created",
         description:
           result.skipped && result.skipped > 0
-            ? `${result.skipped} files were skipped.`
+            ? `${formatPlural(result.skipped, { one: "file was", other: "files were" })} skipped.`
             : undefined,
       });
       if (!exporting && options.deleteOriginals) setOrder([]);
