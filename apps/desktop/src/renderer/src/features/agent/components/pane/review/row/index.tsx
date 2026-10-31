@@ -1,4 +1,4 @@
-import { Shimmer, Swap } from "@pond/ui";
+import { Button, Shimmer, Swap } from "@pond/ui";
 import type { AssistantChange } from "@shared/assistant";
 import { useId } from "react";
 import { openSave } from "@/features/saves/navigation";
@@ -81,15 +81,17 @@ export function ChangeRow({
       }
     >
       {change.saveId ? (
-        <button
-          type="button"
+        <Button
+          variant="bare"
+          size="sm"
+          width="full"
           className={styles.main}
           aria-label={`Open ${title}`}
           aria-describedby={detailId}
           onClick={() => openSave(change.saveId)}
         >
           {content}
-        </button>
+        </Button>
       ) : (
         <span className={styles.main}>{content}</span>
       )}

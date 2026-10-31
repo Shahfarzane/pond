@@ -1,5 +1,5 @@
 import { IconCaretRightFill } from "@pond/icons";
-import { Keyboard, Loader } from "@pond/ui";
+import { Keyboard, Loader, PickerPanel } from "@pond/ui";
 import {
   type CSSProperties,
   type MouseEvent,
@@ -77,17 +77,15 @@ const EntryRow = memo(function EntryRow({
     onActivate(index);
   }
   return (
-    <button
+    <PickerPanel.Item
       id={entry.id}
-      type="button"
-      role="option"
-      tabIndex={-1}
+      active={active}
+      highlight="active"
       aria-selected={active}
       data-command-index={index}
       className={styles.item}
       data-tall={entry.tall || undefined}
       onMouseMove={onMouseMove}
-      onMouseDown={(event) => event.preventDefault()}
       onClick={() => onExecute(index)}
     >
       <span className={styles.icon}>{entry.icon}</span>
@@ -122,7 +120,7 @@ const EntryRow = memo(function EntryRow({
           aria-hidden
         />
       ) : null}
-    </button>
+    </PickerPanel.Item>
   );
 });
 
