@@ -52,9 +52,6 @@
   text-decoration: none;
 
   border-radius: var(--ds-radius-md);
-  transition:
-    color var(--ds-duration-medium) var(--ds-easing-standard),
-    background var(--ds-duration-medium) var(--ds-easing-standard);
 
   &:hover {
     color: var(--ds-gray-12);
@@ -104,9 +101,6 @@
   font-weight: var(--ds-weight-lg);
   color: var(--ds-gray-9);
   border-radius: var(--ds-radius-md);
-  transition:
-    color var(--ds-duration-medium) var(--ds-easing-standard),
-    background var(--ds-duration-medium) var(--ds-easing-standard);
 
   &[data-panel-open] .caret {
     transform: rotate(90deg);

@@ -60,10 +60,7 @@
   border: 0;
   border-radius: var(--ds-radius-sm);
   opacity: 0;
-
-  transition:
-    color var(--ds-duration-fast, 0.12s) ease,
-    opacity var(--ds-duration-fast, 0.12s) ease;
+  transition: opacity var(--ds-duration-fast, 0.12s) ease;
 
   &:hover {
     color: var(--ds-gray-12);

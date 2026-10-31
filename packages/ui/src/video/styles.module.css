@@ -87,7 +87,6 @@
   background: transparent;
   border: 0;
   border-radius: var(--ds-radius-full);
-  transition: background-color 0.16s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   &:hover {
     background: var(--ds-white-a3);
@@ -276,7 +275,6 @@
   background: transparent;
   border: 0;
   border-radius: var(--ds-radius-md);
-  transition: background-color 0.16s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .speed:hover {

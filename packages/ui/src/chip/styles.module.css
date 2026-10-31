@@ -104,10 +104,6 @@
     background: transparent;
     border: var(--ds-border-width) solid var(--ds-border-subtle);
     border-radius: var(--ds-radius-full);
-    transition:
-      color var(--ds-duration-fast) var(--ds-easing-standard),
-      background var(--ds-duration-fast) var(--ds-easing-standard),
-      border-color var(--ds-duration-fast) var(--ds-easing-standard);
 
     &:hover {
       color: var(--ds-gray-12);
@@ -124,7 +120,6 @@
     background: var(--ds-gray-a3);
     border: 0;
     border-radius: var(--ds-radius-full);
-    transition: background var(--ds-duration-fast) var(--ds-easing-standard);
 
     &:hover {
       background: var(--ds-gray-a4);

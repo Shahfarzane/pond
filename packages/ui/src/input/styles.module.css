@@ -74,10 +74,7 @@
   &:has(> .affix) {
     overflow: hidden;
     border-radius: var(--input-radius);
-    transition:
-      background var(--ds-duration-medium) var(--ds-easing-standard),
-      border-color var(--ds-duration-medium) var(--ds-easing-standard),
-      box-shadow var(--ds-duration-medium) var(--ds-easing-standard);
+    transition: box-shadow var(--ds-duration-medium) var(--ds-easing-standard);
   }
 
   &:has(> [data-multiline]) {

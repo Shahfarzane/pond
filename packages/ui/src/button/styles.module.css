@@ -40,8 +40,6 @@
   text-wrap: nowrap;
   user-select: none;
   transition:
-    color var(--ds-duration-medium) var(--ds-easing-standard),
-    background-color var(--ds-duration-medium) var(--ds-easing-standard),
     box-shadow var(--ds-duration-medium) var(--ds-easing-standard),
     opacity var(--ds-duration-medium) var(--ds-easing-standard),
     scale var(--ds-duration-bounce) var(--ds-easing-bounce);
@@ -64,8 +62,6 @@
   &:active {
     scale: 0.96;
     transition:
-      color var(--ds-duration-medium) var(--ds-easing-standard),
-      background-color var(--ds-duration-medium) var(--ds-easing-standard),
       box-shadow var(--ds-duration-medium) var(--ds-easing-standard),
       opacity var(--ds-duration-medium) var(--ds-easing-standard),
       scale var(--ds-duration-fast) var(--ds-easing-decelerate);
