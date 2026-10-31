@@ -349,7 +349,7 @@ export function Gallery() {
       </header>
 
       <Frames value={{ themes, width: WIDTHS[width] }}>
-        <div className={styles.scroll}>
+        <div className={styles.scroll} data-scroll-fade="vertical">
           <FishGallery themes={themes} />
           <PromptGallery themes={themes} />
           <EmptyStates />

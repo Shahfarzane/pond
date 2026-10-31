@@ -3,7 +3,6 @@
   top: 0;
   left: 0;
   display: none;
-  color: var(--ds-gray-8);
   cursor: grab;
   user-select: none;
   opacity: 0;

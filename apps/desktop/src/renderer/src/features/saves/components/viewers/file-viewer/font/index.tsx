@@ -168,7 +168,7 @@ export function FontViewer(props: ViewerProps & { url: string }) {
           end={navigationControls(props.navigation)}
         />
       </ChromePortal>
-      <div className={styles.scroll}>
+      <div className={styles.scroll} data-scroll-fade="vertical">
         {mode === "specimen" ? (
           <div className={styles.specimen}>{specimen || DEFAULT_SPECIMEN}</div>
         ) : null}

@@ -16,12 +16,16 @@ function Root(props: Base.Root.Props) {
 }
 
 type TriggerProps = Base.Trigger.Props &
-  Pick<ButtonProps, "variant" | "size" | "icon" | "rounding" | "width">;
+  Pick<
+    ButtonProps,
+    "variant" | "size" | "density" | "icon" | "rounding" | "width"
+  >;
 
 function Trigger({
   className,
   variant,
   size,
+  density,
   icon,
   rounding,
   width,
@@ -35,6 +39,7 @@ function Trigger({
         ) : (
           <Button
             size={size}
+            density={density}
             icon={icon}
             rounding={rounding}
             width={width}
@@ -105,14 +110,26 @@ function Viewport({ className, ...props }: Base.Viewport.Props) {
 
 const List = forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<"div">>(
   function List({ className, ...props }, ref) {
-    return <div ref={ref} className={cn(styles.list, className)} {...props} />;
+    return (
+      <div
+        ref={ref}
+        className={cn(styles.list, className)}
+        data-scroll-fade="vertical"
+        {...props}
+      />
+    );
   },
 );
 
 const FilterList = forwardRef<HTMLDivElement, Base.List.Props>(
   function FilterList({ className, ...props }, ref) {
     return (
-      <Base.List ref={ref} className={cn(styles.list, className)} {...props} />
+      <Base.List
+        ref={ref}
+        className={cn(styles.list, className)}
+        data-scroll-fade="vertical"
+        {...props}
+      />
     );
   },
 );

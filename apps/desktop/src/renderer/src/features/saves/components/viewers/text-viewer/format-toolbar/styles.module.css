@@ -50,11 +50,6 @@
 .aa,
 .list {
   gap: 2px;
-
-  &[data-popup-open] {
-    color: var(--ds-gray-12);
-    background-color: var(--ds-gray-a3);
-  }
 }
 
 .aa {

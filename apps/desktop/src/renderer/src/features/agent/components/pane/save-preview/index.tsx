@@ -123,7 +123,7 @@ export function SaveCitation({
   return (
     <Button
       type="button"
-      variant="link"
+      variant="bare"
       className={styles.citation}
       aria-label={`Open source ${reference}: ${title}`}
       onClick={() => onOpenSave(source.id)}

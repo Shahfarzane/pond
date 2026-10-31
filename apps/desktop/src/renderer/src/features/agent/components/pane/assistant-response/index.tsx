@@ -196,6 +196,7 @@ const responseComponents = {
   table: ({ children }) => (
     <section
       className={styles.table}
+      data-scroll-fade="horizontal"
       // biome-ignore lint/a11y/noNoninteractiveTabindex: Keyboard users need to scroll wide tables in the side pane.
       tabIndex={0}
       aria-label="Response table"

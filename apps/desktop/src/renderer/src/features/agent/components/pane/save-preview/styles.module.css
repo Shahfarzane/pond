@@ -89,11 +89,10 @@
   display: inline-flex;
   gap: 4px;
   align-items: baseline;
+  font-size: var(--ds-text-md);
+  font-weight: var(--ds-weight-lg);
+  line-height: 1;
   color: var(--ds-accent-11);
-
-  &::after {
-    display: none;
-  }
 
   &:hover {
     color: var(--ds-accent-12);

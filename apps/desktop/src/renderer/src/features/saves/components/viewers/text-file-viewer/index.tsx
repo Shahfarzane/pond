@@ -137,7 +137,7 @@ export function TextFileViewer({
           end={<ViewerNavigationControls navigation={navigation} />}
         />
       </ChromePortal>
-      <div className={styles.scroll}>
+      <div className={styles.scroll} data-scroll-fade="vertical">
         {failed ? (
           <p className={styles.status}>Pond couldn't read this text file.</p>
         ) : (

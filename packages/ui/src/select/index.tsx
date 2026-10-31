@@ -95,7 +95,13 @@ function Popup({ className, ...props }: Base.Popup.Props) {
 }
 
 function List({ className, ...props }: Base.List.Props) {
-  return <Base.List {...props} className={cn(styles.list, className)} />;
+  return (
+    <Base.List
+      data-scroll-fade="vertical"
+      {...props}
+      className={cn(styles.list, className)}
+    />
+  );
 }
 
 function Arrow({ className, ...props }: Base.Arrow.Props) {

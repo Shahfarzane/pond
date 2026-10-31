@@ -143,6 +143,7 @@ export function DataTableRoot<T extends RowData>({
         ref={meta.scrollRef}
         className={styles.viewport}
         data-viewport=""
+        data-scroll-fade="vertical"
         data-header={showHeader || undefined}
         data-sized={sized || undefined}
         style={

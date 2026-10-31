@@ -196,7 +196,7 @@ export function RuleDialog(props: RuleDialogProps) {
                 {editing ? "Edit" : "New"} {label}
               </Dialog.Title>
             </Dialog.Header>
-            <div className={styles.body}>
+            <div className={styles.body} data-scroll-fade="vertical">
               <Field.Root
                 className={styles.name}
                 invalid={invalid.name || undefined}

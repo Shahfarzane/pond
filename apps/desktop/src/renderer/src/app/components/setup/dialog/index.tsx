@@ -163,6 +163,7 @@ export function SetupDialog({
                 key={id}
                 className={styles.step}
                 data-layout={step.layout}
+                data-scroll-fade="vertical"
                 aria-labelledby={headingId}
                 custom={direction}
                 variants={variants}

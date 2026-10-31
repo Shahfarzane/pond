@@ -29,7 +29,7 @@ function Toggle({
         size="sm"
         variant="ghost"
         className={cn(styles.toggle, className)}
-        data-active={open || active || undefined}
+        data-pressed={open || active || undefined}
         aria-label="Filter"
         aria-expanded={open}
         aria-controls={controlsId}
@@ -80,7 +80,9 @@ function Bar({
         >
           <div className={styles.bar} data-wrap={wrap || undefined}>
             <div className={styles["filters-viewport"]}>
-              <div className={styles.filters}>{children}</div>
+              <div className={styles.filters} data-scroll-fade="horizontal">
+                {children}
+              </div>
             </div>
             {actions ? <div className={styles.actions}>{actions}</div> : null}
           </div>

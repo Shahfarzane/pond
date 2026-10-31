@@ -13,8 +13,11 @@ export interface ButtonProps extends Base.Props {
     | "text"
     | "accent"
     | "destructive"
-    | "link";
+    | "link"
+    | "bare";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
+  /** `compact` keeps the type and icon of `size` one height step shorter with half the inline padding, for dense trails. */
+  density?: "default" | "compact";
   rounding?: "default" | "full";
   icon?: boolean;
   width?: "full" | "auto";
@@ -25,6 +28,7 @@ export function Button({
   className,
   variant = "primary",
   size = "md",
+  density = "default",
   rounding = "default",
   width = "auto",
   icon,
@@ -44,6 +48,7 @@ export function Button({
       data-width={width}
       data-variant={variant}
       data-size={size}
+      data-density={density === "compact" ? density : undefined}
       data-rounding={rounding}
       data-icon={icon ? "" : undefined}
       data-loading={loading || undefined}

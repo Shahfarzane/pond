@@ -35,6 +35,10 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-padding-block: 4px;
+
+  &:has(.group-label-sticky) {
+    --scroll-fade-start-size: 0px;
+  }
 }
 
 .positioner {

@@ -288,14 +288,26 @@ function Body({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function Sidebar({ className, ...props }: React.ComponentProps<"div">) {
-  return <div {...props} className={cn(styles.sidebar, className)} />;
+  return (
+    <div
+      data-scroll-fade="vertical"
+      {...props}
+      className={cn(styles.sidebar, className)}
+    />
+  );
 }
 
 function Collection({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  return <div {...props} className={cn(styles.collection, className)} />;
+  return (
+    <div
+      data-scroll-fade="vertical"
+      {...props}
+      className={cn(styles.collection, className)}
+    />
+  );
 }
 
 function Group({ className, ...props }: React.ComponentProps<"div">) {
@@ -322,12 +334,15 @@ function SectionButton({
 function Item({
   active,
   className,
+  highlight = "hover",
   role = "option",
   selected = "unchecked",
   onMouseDown,
   ...props
 }: React.ComponentProps<"button"> & {
   active?: boolean;
+  /** `active` fills only the active row, for lists whose pointer moves the active row. */
+  highlight?: "hover" | "active";
   selected?: PickerSelectionState;
 }) {
   return (
@@ -337,6 +352,7 @@ function Item({
       role={role}
       tabIndex={-1}
       data-active={active ? "" : undefined}
+      data-highlight={highlight === "active" ? highlight : undefined}
       data-selection={selected}
       className={cn(styles.item, className)}
       onMouseDown={(event) => {

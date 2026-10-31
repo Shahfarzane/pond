@@ -177,7 +177,11 @@ export function WorkspaceMenu() {
           if (next) void refetch();
         }}
       >
-        <Menu.Trigger variant="ghost" size="sm" className={styles.trigger}>
+        <Menu.Trigger
+          variant="ghost"
+          density="compact"
+          className={styles.trigger}
+        >
           <span className={styles.mark} aria-hidden>
             <img
               className={styles["library-icon"]}

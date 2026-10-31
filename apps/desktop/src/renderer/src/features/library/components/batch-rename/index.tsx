@@ -367,7 +367,7 @@ export function BatchRenameDialog({
                   </ToggleGroup>
                 </div>
               </fieldset>
-              <div className={styles.preview}>
+              <div className={styles.preview} data-scroll-fade="vertical">
                 <Table.Root
                   className={styles.table}
                   containerClassName={styles.container}

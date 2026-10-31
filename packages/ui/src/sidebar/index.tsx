@@ -148,7 +148,13 @@ function Footer({ className, ...props }: FooterProps) {
 interface ScrollProps extends React.ComponentPropsWithoutRef<"div"> {}
 
 function Scroll({ className, ...props }: ScrollProps) {
-  return <div className={cn(styles.scroll, className)} {...props} />;
+  return (
+    <div
+      className={cn(styles.scroll, className)}
+      data-scroll-fade="vertical"
+      {...props}
+    />
+  );
 }
 
 interface SearchProps extends ComponentProps<typeof Input.Field> {}
