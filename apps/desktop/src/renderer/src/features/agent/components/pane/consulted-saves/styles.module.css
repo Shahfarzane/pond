@@ -139,7 +139,6 @@
 .type {
   font-family: var(--ds-code-font-family);
   font-size: var(--ds-text-xxs);
-  letter-spacing: 0.02em;
 }
 
 .expand {
