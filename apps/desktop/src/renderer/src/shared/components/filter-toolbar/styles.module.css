@@ -18,7 +18,7 @@
   padding: 8px;
 }
 
-.filters-viewport {
+.viewport {
   flex: 1;
   min-width: 0;
   overflow: visible;

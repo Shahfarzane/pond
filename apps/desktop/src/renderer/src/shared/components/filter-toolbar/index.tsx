@@ -79,7 +79,7 @@ function Bar({
           {...props}
         >
           <div className={styles.bar} data-wrap={wrap || undefined}>
-            <div className={styles["filters-viewport"]}>
+            <div className={styles.viewport}>
               <div className={styles.filters} data-scroll-fade="horizontal">
                 {children}
               </div>

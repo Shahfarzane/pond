@@ -115,7 +115,7 @@ function SourceCell({ row }: { row: DownloadViewRow }) {
   return (
     <span className={styles.source}>
       <BrandTile source={source} size={18} />
-      <span className={styles["source-label"]}>{sourceLabel(source)}</span>
+      <span className={styles.label}>{sourceLabel(source)}</span>
     </span>
   );
 }
@@ -129,7 +129,7 @@ function StatusCell({ row }: { row: DownloadViewRow }) {
       <span className={styles.mark} data-status={status}>
         <StatusGlyph status={status} />
       </span>
-      <span className={styles["status-label"]}>{label}</span>
+      <span className={styles.label}>{label}</span>
     </span>
   );
   if (!reason) return content;
@@ -150,7 +150,7 @@ function ProgressRing({ value }: { value: number }) {
       aria-hidden
     >
       <circle
-        className={styles["progress-ring-track"]}
+        className={styles.track}
         cx="8"
         cy="8"
         r="6"
@@ -158,7 +158,7 @@ function ProgressRing({ value }: { value: number }) {
         strokeWidth="2"
       />
       <circle
-        className={styles["progress-ring-value"]}
+        className={styles.value}
         cx="8"
         cy="8"
         r="6"

@@ -133,8 +133,8 @@ export function SaveCitation({
         <span>{reference}</span>
       ) : (
         <>
-          <IconBookmark size={12} className={styles["citation-icon"]} />
-          <span className={styles["citation-title"]}>{title}</span>
+          <IconBookmark size={12} className={styles.icon} />
+          <span className={styles.title}>{title}</span>
         </>
       )}
     </Button>

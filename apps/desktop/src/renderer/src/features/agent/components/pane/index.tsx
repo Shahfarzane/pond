@@ -164,13 +164,13 @@ function AgentPaneContent({
         data-reduced-motion={reduceMotion || undefined}
         aria-label={persona.name}
       >
-        <div className={styles["assistant-workspace"]}>
+        <div className={styles.workspace}>
           <Thread.Conversation
             key={state.chatId ?? "new"}
-            className={styles["assistant-body"]}
+            className={styles.body}
             marks={marks}
             viewportProps={{
-              className: styles["chat-viewport"],
+              className: styles.viewport,
               ref: viewportRef,
             }}
             empty={

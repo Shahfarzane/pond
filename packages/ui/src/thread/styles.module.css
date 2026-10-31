@@ -128,7 +128,7 @@
   text-align: left;
 }
 
-.preview-title {
+.title {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: var(--ds-text-sm);
@@ -137,7 +137,7 @@
   white-space: nowrap;
 }
 
-.preview-description {
+.description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;

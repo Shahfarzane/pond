@@ -144,7 +144,7 @@
   font-size: var(--ds-text-md);
 }
 
-.preview-title {
+.heading {
   font-size: inherit;
   font-weight: var(--ds-weight-lg);
   overflow-wrap: anywhere;

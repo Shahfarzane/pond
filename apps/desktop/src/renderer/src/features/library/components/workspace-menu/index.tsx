@@ -87,7 +87,7 @@ function LibraryMenuContent({
               >
                 <Menu.ItemIcon className={styles.identity}>
                   <img
-                    className={styles["library-icon"]}
+                    className={styles.icon}
                     src={entry.icon ?? defaultAppIcon}
                     alt=""
                   />
@@ -184,7 +184,7 @@ export function WorkspaceMenu() {
         >
           <span className={styles.mark} aria-hidden>
             <img
-              className={styles["library-icon"]}
+              className={styles.icon}
               src={info?.icon ?? defaultAppIcon}
               alt=""
             />

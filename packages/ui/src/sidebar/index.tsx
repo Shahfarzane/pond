@@ -67,7 +67,7 @@ function ItemLabel({
 }: ItemLabelProps) {
   return (
     <span
-      className={cn(styles["item-label"], className)}
+      className={cn(styles.text, className)}
       title={title}
       onPointerEnter={(event) => {
         if (title === undefined) {
@@ -86,7 +86,7 @@ function ItemLabel({
 interface ItemDetailProps extends React.ComponentPropsWithoutRef<"span"> {}
 
 function ItemDetail({ className, ...props }: ItemDetailProps) {
-  return <span className={cn(styles["item-detail"], className)} {...props} />;
+  return <span className={cn(styles.detail, className)} {...props} />;
 }
 
 interface ResultButtonProps extends Button.Props {}
@@ -130,7 +130,7 @@ function GroupLabel({ className, ...props }: GroupLabelProps) {
 interface GroupHeaderProps extends React.ComponentPropsWithoutRef<"div"> {}
 
 function GroupHeader({ className, ...props }: GroupHeaderProps) {
-  return <div className={cn(styles["group-header"], className)} {...props} />;
+  return <div className={cn(styles.heading, className)} {...props} />;
 }
 
 interface GroupContentProps extends React.ComponentPropsWithoutRef<"div"> {}

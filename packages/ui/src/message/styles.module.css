@@ -81,7 +81,7 @@
   padding-inline: 0;
 }
 
-.bubble-row {
+.row {
   display: flex;
   gap: 4px;
   align-items: center;

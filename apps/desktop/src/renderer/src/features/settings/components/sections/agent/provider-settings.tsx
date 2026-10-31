@@ -93,7 +93,7 @@ function ProviderList({ children }: { children: ReactNode }) {
   return (
     <Settings.List>
       <AnimateHeight initial={false}>
-        <div className={styles["list-body"]}>{children}</div>
+        <div className={styles.body}>{children}</div>
       </AnimateHeight>
     </Settings.List>
   );

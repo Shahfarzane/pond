@@ -63,7 +63,7 @@ function AvatarInner({
           onError={() => setFailed(true)}
         />
       ) : (
-        <span className={styles["avatar-fallback"]}>
+        <span className={styles.fallback}>
           {initials(author.name || author.handle || "?")}
         </span>
       )}

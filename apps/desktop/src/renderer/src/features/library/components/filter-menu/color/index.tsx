@@ -52,13 +52,13 @@ export function ColorFilter({
             width={150}
             height={150}
             className={styles.area}
-            thumbClassName={styles["area-thumb"]}
+            thumbClassName={styles.thumb}
           />
           <ColorField.Hue
             width={13}
             height={150}
             className={styles.hue}
-            thumbClassName={styles["hue-thumb"]}
+            thumbClassName={styles.thumb}
           />
         </div>
       </ColorField.PickerRoot>
@@ -147,11 +147,11 @@ export function ColorFilter({
           if (next.success) apply(hex, 150 - next.data);
         }}
       >
-        <Slider.Label className={styles["range-label"]}>Accuracy</Slider.Label>
+        <Slider.Label className={styles.label}>Accuracy</Slider.Label>
         <Slider.Control className={styles.control}>
           <Slider.Track className={styles.track}>
             <Slider.Thumb
-              className={styles["range-thumb"]}
+              className={styles.thumb}
               aria-label="Color Accuracy"
             />
           </Slider.Track>

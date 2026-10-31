@@ -19,7 +19,7 @@
   border-radius: 0;
 }
 
-.area-thumb {
+.area > .thumb {
   width: 10px;
   height: 10px;
   border-width: 1px;
@@ -30,7 +30,7 @@
   border-radius: var(--ds-radius-xs);
 }
 
-.hue-thumb {
+.hue > .thumb {
   width: 13px;
   height: 1px;
   border: 0;
@@ -127,7 +127,7 @@
   min-width: 0;
 }
 
-.range-label {
+.label {
   flex: none;
   font-size: var(--ds-text-xs);
   font-weight: var(--ds-weight-md);
@@ -145,7 +145,7 @@
   background: var(--ds-gray-a6);
 }
 
-.range-thumb {
+.range .thumb {
   width: 12px;
   height: 12px;
   box-shadow: var(--ds-shadow-xs);

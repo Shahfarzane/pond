@@ -113,9 +113,7 @@ function Item({ className, ...props }: Base.Item.Props) {
 }
 
 function ItemText({ className, ...props }: Base.ItemText.Props) {
-  return (
-    <Base.ItemText className={cn(styles["item-label"], className)} {...props} />
-  );
+  return <Base.ItemText className={cn(styles.text, className)} {...props} />;
 }
 
 function ItemIndicator({ className, ...props }: Base.ItemIndicator.Props) {
@@ -132,14 +130,7 @@ function Group(props: Base.Group.Props) {
 
 function GroupLabel({ className, ...props }: Base.GroupLabel.Props) {
   return (
-    <Base.GroupLabel
-      className={cn(
-        styles["group-label"],
-        styles["group-label-sticky"],
-        className,
-      )}
-      {...props}
-    />
+    <Base.GroupLabel className={cn(styles.heading, className)} {...props} />
   );
 }
 

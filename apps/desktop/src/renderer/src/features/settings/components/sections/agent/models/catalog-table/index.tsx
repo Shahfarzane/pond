@@ -143,7 +143,7 @@ export function ModelCatalogTable({
         {[...groups].map(([provider, group]) => (
           <Accordion.Item key={provider} value={provider}>
             <Accordion.Header
-              className={styles["group-header"]}
+              className={styles.header}
               render={<h2 aria-label={group.name} />}
             >
               <Accordion.Trigger aria-label={group.name}>
