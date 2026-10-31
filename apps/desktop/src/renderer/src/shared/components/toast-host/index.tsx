@@ -39,7 +39,7 @@ function AskActions({ id, ask, spotlight }: AskActionsProps) {
   );
 }
 
-export function ToastItem({ toast }: { toast: ToastObject }) {
+function ToastItem({ toast }: { toast: ToastObject }) {
   const data = toast.data;
   const spotlight = data?.variant === "spotlight";
   return (

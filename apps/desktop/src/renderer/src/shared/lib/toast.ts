@@ -96,7 +96,7 @@ export function ask(options: AskOptions): void {
   toastManager.add(askToast(ASK_TOAST_ID, options));
 }
 
-export function askToast(
+function askToast(
   id: string,
   options: AskOptions,
 ): Parameters<typeof toastManager.add>[0] {
