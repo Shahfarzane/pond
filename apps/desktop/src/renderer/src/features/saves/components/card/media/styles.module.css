@@ -62,9 +62,11 @@
   }
 }
 
-.thumb[data-hover-zoom]:hover .visual {
-  transform: scale(1.35);
-  transform-origin: var(--hover-origin-x, 50%) var(--hover-origin-y, 50%);
+@media (hover: hover) and (pointer: fine) {
+  .thumb[data-hover-zoom]:hover .visual {
+    transform: scale(1.35);
+    transform-origin: var(--hover-origin-x, 50%) var(--hover-origin-y, 50%);
+  }
 }
 
 .placeholder {
