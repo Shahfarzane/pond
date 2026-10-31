@@ -1,5 +1,6 @@
 import { Button as Base } from "@base-ui/react/button";
 import { clsx as cn } from "clsx";
+import { Loader } from "../loader";
 import { pop } from "../shared/pop";
 import styles from "./styles.module.css";
 
@@ -30,6 +31,7 @@ export function Button({
   loading,
   disabled,
   onClick,
+  children,
   ...props
 }: ButtonProps) {
   return (
@@ -45,8 +47,12 @@ export function Button({
       data-rounding={rounding}
       data-icon={icon ? "" : undefined}
       data-loading={loading || undefined}
+      aria-busy={loading || undefined}
       disabled={disabled || loading || undefined}
       className={cn(styles.root, className)}
-    />
+    >
+      {loading ? <Loader.Spinner className={styles.spinner} /> : null}
+      {children}
+    </Base>
   );
 }
