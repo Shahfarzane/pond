@@ -90,7 +90,10 @@ const Textarea = forwardRef<
   HTMLTextAreaElement,
   React.ComponentProps<"textarea"> & {
     onValueChange?: (value: string) => void;
-    padding?: "default" | "comfortable";
+    /** `compact` sizes one line to the single-line field height of the same `size`. */
+    padding?: "default" | "comfortable" | "compact";
+    /** `content` grows the field with its text instead of holding `rows`. */
+    sizing?: "rows" | "content";
     appearance?: FieldAppearance;
   }
 >(function Textarea(
@@ -102,6 +105,7 @@ const Textarea = forwardRef<
     onValueChange,
     onKeyDown,
     padding,
+    sizing,
     ...props
   },
   ref,
@@ -112,7 +116,8 @@ const Textarea = forwardRef<
       ref={ref}
       data-slot="field"
       data-multiline
-      data-padding={padding === "comfortable" ? padding : undefined}
+      data-padding={padding === "default" ? undefined : padding}
+      data-sizing={sizing === "content" ? sizing : undefined}
       data-appearance={appearance === "bare" ? appearance : undefined}
       rows={rows}
       className={cn(styles.field, className)}

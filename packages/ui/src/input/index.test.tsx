@@ -28,4 +28,17 @@ describe("Input", () => {
 
     expect(markup.match(/data-appearance="bare"/g)).toHaveLength(2);
   });
+
+  it("marks compact, content-sized textareas", () => {
+    const markup = renderToStaticMarkup(
+      <>
+        <Input.Textarea padding="compact" sizing="content" aria-label="Note" />
+        <Input.Textarea padding="default" aria-label="Description" />
+      </>,
+    );
+
+    expect(markup.match(/data-padding="compact"/g)).toHaveLength(1);
+    expect(markup.match(/data-sizing="content"/g)).toHaveLength(1);
+    expect(markup).not.toContain('data-padding="default"');
+  });
 });

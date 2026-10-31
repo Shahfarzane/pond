@@ -27,6 +27,19 @@
     --button-radius-lg: var(--ds-radius-full);
     --button-radius-xl: var(--ds-radius-full);
   }
+
+  &:where([data-density="compact"]) {
+    --button-height-xs: calc(var(--ds-size-xs) - 4px);
+    --button-padding-xs: 0 4px;
+    --button-height-sm: var(--ds-size-xs);
+    --button-padding-sm: 0 5px;
+    --button-height-md: var(--ds-size-sm);
+    --button-padding-md: 0 6px;
+    --button-height-lg: var(--ds-size-md);
+    --button-padding-lg: 0 7px;
+    --button-height-xl: var(--ds-size-lg);
+    --button-padding-xl: 0 8px;
+  }
 }
 
 .root {

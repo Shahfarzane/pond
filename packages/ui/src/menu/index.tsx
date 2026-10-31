@@ -16,12 +16,16 @@ function Root(props: Base.Root.Props) {
 }
 
 type TriggerProps = Base.Trigger.Props &
-  Pick<ButtonProps, "variant" | "size" | "icon" | "rounding" | "width">;
+  Pick<
+    ButtonProps,
+    "variant" | "size" | "density" | "icon" | "rounding" | "width"
+  >;
 
 function Trigger({
   className,
   variant,
   size,
+  density,
   icon,
   rounding,
   width,
@@ -35,6 +39,7 @@ function Trigger({
         ) : (
           <Button
             size={size}
+            density={density}
             icon={icon}
             rounding={rounding}
             width={width}

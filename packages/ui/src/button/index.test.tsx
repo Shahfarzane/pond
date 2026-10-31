@@ -12,6 +12,17 @@ describe("Button", () => {
     expect(markup).toContain("disabled");
   });
 
+  it("marks compact density only when asked", () => {
+    const markup = renderToStaticMarkup(
+      <>
+        <Button density="compact">Inbox</Button>
+        <Button>Archive</Button>
+      </>,
+    );
+
+    expect(markup.match(/data-density="compact"/g)).toHaveLength(1);
+  });
+
   it("renders no spinner at rest", () => {
     const markup = renderToStaticMarkup(<Button>Import</Button>);
 

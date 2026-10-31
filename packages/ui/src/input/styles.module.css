@@ -165,18 +165,26 @@
   &[data-multiline][data-padding="comfortable"] {
     padding: 16px;
   }
+
+  &[data-multiline][data-padding="compact"] {
+    min-height: var(--input-min-height);
+    padding-block: calc((var(--input-min-height) - 1lh) / 2);
+  }
+
+  &[data-sizing="content"] {
+    field-sizing: content;
+  }
 }
 
 .field:where([data-appearance="bare"]) {
   --ds-focus-outline: transparent;
 
-  flex: initial;
-  width: auto;
   height: auto;
   min-height: 0;
   padding: 0;
   font: inherit;
   color: inherit;
+  text-align: inherit;
   resize: none;
   background: none;
   border: 0;
