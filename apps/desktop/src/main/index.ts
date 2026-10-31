@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync } from "node:fs";
 import type { Server as NetServer } from "node:net";
 import { join, resolve as resolvePath } from "node:path";
+import { SAFARI_APP_GROUP } from "@pond/schema/native";
 import { app, globalShortcut, ipcMain, powerMonitor } from "electron";
 import log from "electron-log/main.js";
 import { DEFAULT_APP_ICON } from "../shared/app-icons";
@@ -75,6 +76,7 @@ import {
 } from "./lifecycle";
 import { resolveLogFile } from "./logging";
 import { installAppMenu, setMenuRecents } from "./menu";
+import { openAppGroupContainer } from "./native/app-group";
 import { writeNativeHostManifests } from "./native/manifests";
 import { safariSocketPath } from "./native/paths";
 import { startNativeServer, stopNativeServer } from "./native/server";
@@ -382,6 +384,10 @@ async function postLaunchInit(): Promise<void> {
     app.isPackaged &&
     !process.env.POND_SANDBOX
   ) {
+    /** macOS refuses the socket (EPERM) until Pond has asked for the container. */
+    if (!openAppGroupContainer(SAFARI_APP_GROUP)) {
+      log.warn("[pond] app group container unavailable", SAFARI_APP_GROUP);
+    }
     try {
       safariServer = await startNativeServer({ path: safariSocketPath() });
     } catch (err) {
