@@ -73,6 +73,18 @@ const copy = new Map<string, StepCopy>([
     "Read operation result",
     { live: "Reading operation results", after: "Checking how it went" },
   ],
+  [
+    "Set up routine",
+    { live: "Setting up a routine", after: "Checking the routine" },
+  ],
+  [
+    "Update routine",
+    { live: "Updating a routine", after: "Checking the routine" },
+  ],
+  [
+    "Delete routine",
+    { live: "Deleting a routine", after: "Checking your routines" },
+  ],
 ]);
 
 export function currentActivityLabel(
