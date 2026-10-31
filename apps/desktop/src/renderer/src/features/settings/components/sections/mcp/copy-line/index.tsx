@@ -9,7 +9,9 @@ export function CopyLine({ label, value }: { label: string; value: string }) {
     <div className={styles.step}>
       <p className={styles.merge}>{label}</p>
       <div className={styles.command}>
-        <code className={styles.value}>{value}</code>
+        <code className={styles.value} title={value}>
+          {value}
+        </code>
         <Button
           size="xs"
           variant="ghost"

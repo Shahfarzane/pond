@@ -51,7 +51,9 @@ export function ChangeRow({
         </span>
       )}
       <span className={styles.text}>
-        <span className={styles.title}>{title}</span>
+        <span className={styles.title} title={title}>
+          {title}
+        </span>
         <Swap
           id={detailId}
           value={status ?? "summary"}
