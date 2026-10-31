@@ -255,7 +255,7 @@ function Breadcrumbs() {
           ) : (
             <Button
               variant="ghost"
-              size="sm"
+              density="compact"
               className={styles.crumb}
               title={crumb.label}
               onClick={() => navigate(crumb)}

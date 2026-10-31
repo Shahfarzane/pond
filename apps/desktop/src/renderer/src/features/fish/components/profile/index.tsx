@@ -111,6 +111,7 @@ export function FishProfile({
           label="Name"
           value={target.name}
           variant="borderless"
+          appearance="bare"
           size="lg"
           maxLength={40}
           commit={async (value) => {

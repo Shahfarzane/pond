@@ -303,6 +303,7 @@ export function SaveInspector({
                 multiline
                 disabled
                 variant="borderless"
+                padding="compact"
                 mixedPlaceholder="Multiple descriptions"
                 commit={async () => {}}
               />

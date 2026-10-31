@@ -53,7 +53,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       size="md"
       variant={variant}
     >
-      <Base.Field ref={ref} className={styles.field} {...props} />
+      <Base.Field
+        ref={ref}
+        className={styles.field}
+        appearance={variant === "borderless" ? "bare" : undefined}
+        {...props}
+      />
     </Base.Root>
   );
 });

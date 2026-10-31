@@ -72,13 +72,6 @@
 .count strong {
   color: var(--ds-blue-9);
 }
-.source-url-editor {
-  width: 100%;
-  min-width: 0;
-}
-.source-url-editor :global([data-slot="field"]) {
-  padding-inline: 0;
-}
 .muted {
   font-size: var(--ds-text-xs);
   color: var(--ds-gray-10);
@@ -89,18 +82,6 @@
 }
 .prose {
   margin-inline: -8px;
-}
-.prose :global(textarea) {
-  min-height: 0;
-  padding: 4px 8px;
-  font-size: var(--ds-text-sm);
-  font-weight: var(--ds-weight-md);
-  line-height: 1.55;
-  color: var(--ds-gray-11);
-  border-radius: var(--ds-radius-md);
-}
-.prose :global(textarea):is(:hover, :focus) {
-  background: var(--ds-gray-a2);
 }
 
 .flag {

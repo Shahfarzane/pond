@@ -47,24 +47,9 @@
 }
 
 .action {
-  display: inline-flex;
   flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  color: var(--ds-gray-10);
-  cursor: var(--ds-cursor-interactive, pointer);
-  background: transparent;
-  border: 0;
-  border-radius: var(--ds-radius-sm);
   opacity: 0;
-  transition: opacity var(--ds-duration-fast, 0.12s) ease;
-
-  &:hover {
-    color: var(--ds-gray-12);
-  }
+  transition: opacity var(--ds-duration-fast) var(--ds-easing-standard);
 
   &[data-popup-open] {
     opacity: 1;

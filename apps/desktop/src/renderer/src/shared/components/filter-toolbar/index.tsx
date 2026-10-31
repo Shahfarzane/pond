@@ -29,7 +29,7 @@ function Toggle({
         size="sm"
         variant="ghost"
         className={cn(styles.toggle, className)}
-        data-active={open || active || undefined}
+        data-pressed={open || active || undefined}
         aria-label="Filter"
         aria-expanded={open}
         aria-controls={controlsId}

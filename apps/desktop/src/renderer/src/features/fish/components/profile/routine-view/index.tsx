@@ -35,13 +35,7 @@ export function RoutineView({
       <Pane.Header
         className={styles.header}
         title={
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            className={styles.back}
-            onClick={onBack}
-          >
+          <Button type="button" size="sm" variant="ghost" onClick={onBack}>
             <IconChevronLeft size={14} />
             {fish.name}
           </Button>

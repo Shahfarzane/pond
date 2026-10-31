@@ -79,7 +79,9 @@ export function ConsultedSaves({
     <article key={item.id} className={styles.row}>
       <Popover.Root>
         <Popover.Trigger
-          render={<Button variant="text" className={styles.open} />}
+          render={
+            <Button variant="bare" width="full" className={styles.open} />
+          }
           aria-label={`Preview ${item.title}`}
         >
           <span className={styles.media}>{item.media}</span>
@@ -135,15 +137,17 @@ export function ConsultedSaves({
         </Reveal>
       </div>
       {items.length > 3 ? (
-        <Button
-          size="xs"
-          variant="text"
-          className={styles.expand}
-          aria-expanded={expanded}
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? "Show Less" : `Show ${items.length - 3} More`}
-        </Button>
+        <div className={styles.footer}>
+          <Button
+            size="xs"
+            variant="text"
+            width="full"
+            aria-expanded={expanded}
+            onClick={() => setExpanded(!expanded)}
+          >
+            {expanded ? "Show Less" : `Show ${items.length - 3} More`}
+          </Button>
+        </div>
       ) : null}
     </section>
   );

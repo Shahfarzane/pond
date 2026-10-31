@@ -132,7 +132,7 @@ export function FolderTreeRow(props: FolderTreeRowProps) {
           <Button
             icon
             size="xs"
-            variant="text"
+            variant="bare"
             className={styles.disclosure}
             aria-label={`${props.collapsed ? "Expand" : "Collapse"} ${folder.name}`}
             aria-expanded={!props.collapsed}
