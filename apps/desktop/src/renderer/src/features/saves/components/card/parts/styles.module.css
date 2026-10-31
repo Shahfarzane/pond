@@ -61,7 +61,7 @@
   content: "";
   border: 2px solid transparent;
   border-radius: var(--ds-radius-sm);
-  transition: all var(--ds-duration-medium) var(--ds-easing-standard);
+  transition: border-color var(--ds-duration-medium) var(--ds-easing-standard);
 }
 
 .select:focus-visible .media::before {
