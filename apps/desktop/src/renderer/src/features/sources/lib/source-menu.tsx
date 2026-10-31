@@ -12,6 +12,7 @@ import {
   IconTrash,
 } from "@pond/icons";
 import type { Source, WatchKind } from "@pond/schema/db";
+import { watchHandleLabel } from "@pond/schema/watches";
 import { Dialog, type MenuItemSpec } from "@pond/ui";
 import { viewAccountItems } from "@/features/library";
 import type { CardModel } from "@/features/sources/components/sync-monitor/lib/helpers";
@@ -80,6 +81,8 @@ export function watchMenuTarget(
 
 function targetKind(target: SourceMenuTarget): string {
   switch (target.watchKind) {
+    case "feed":
+      return "Feed";
     case "playlist":
       return "Playlist";
     case "list":
@@ -99,6 +102,8 @@ function targetKind(target: SourceMenuTarget): string {
 
 function identityKind(target: SourceMenuTarget): string {
   switch (target.watchKind) {
+    case "feed":
+      return "Feed URL";
     case "playlist":
       return "Playlist ID";
     case "list":
@@ -119,9 +124,7 @@ function identityKind(target: SourceMenuTarget): string {
 function targetName(target: SourceMenuTarget): string {
   if (target.label) return target.label;
   if (target.handle) {
-    return target.watchKind === "playlist" || target.watchKind === "list"
-      ? target.handle
-      : `@${target.handle}`;
+    return watchHandleLabel(target.handle, target.watchKind);
   }
   return getSourceDef(target.source).label;
 }

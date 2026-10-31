@@ -103,6 +103,33 @@ it("submits a full link as typed", async () => {
   );
 });
 
+it("adds a feed Watch without a connected account", async () => {
+  await render("web");
+  expect(host.textContent).toContain("Watch an RSS Feed");
+  expect(field().placeholder).toBe("https://example.com/feed.xml");
+  await type("https://example.com/Feed.xml?key=AbC");
+  expect(watchButton().disabled).toBe(false);
+  await submit();
+  expect(addWatch).toHaveBeenCalledExactlyOnceWith(
+    "web",
+    "https://example.com/Feed.xml?key=AbC",
+  );
+});
+
+it("blocks a feed handle and explains an invalid feed response", async () => {
+  await render("web");
+  await type("person");
+  expect(watchButton().disabled).toBe(true);
+  await submit();
+  expect(addWatch).not.toHaveBeenCalled();
+  addWatch.mockResolvedValueOnce({ ok: false, reason: "invalid" });
+  await type("https://example.com/feed");
+  await submit();
+  expect(host.querySelector('[role="alert"]')?.textContent).toBe(
+    "No RSS or Atom feed was found. Check the feed URL.",
+  );
+});
+
 it("rejects a link from another source", async () => {
   await render("instagram", ["instagram"]);
   await type("https://youtube.com/@alice");

@@ -82,6 +82,7 @@ describe("new menu spec", () => {
       "Cosmos",
       "TikTok",
       "YouTube",
+      "RSS Feed",
       "Library",
       "Find Duplicates",
       "Scan All",

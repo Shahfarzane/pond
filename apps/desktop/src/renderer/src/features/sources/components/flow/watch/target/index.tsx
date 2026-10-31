@@ -1,5 +1,6 @@
 import { IconCircleCheckFill } from "@pond/icons";
 import type { Source } from "@pond/schema/db";
+import { WATCH_NEEDS_SESSION, watchSourceLabel } from "@pond/schema/watches";
 import { Button, Dialog } from "@pond/ui";
 import {
   createContext,
@@ -12,9 +13,7 @@ import {
 import { z } from "zod";
 import { ConnectionVisual } from "@/features/sources/components/flow/connection-visual";
 import { useAccounts } from "@/features/sources/hooks/use-accounts";
-import { WATCH_NEEDS_SESSION } from "@/features/sources/hooks/use-watches";
 import { startConnect } from "@/features/sources/lib/create";
-import { getSourceDef } from "@/features/sources/lib/registry";
 import { sourceFlow } from "@/features/sources/state/source-flow";
 import { useWatchSource, watchFlow } from "@/features/sources/state/watch-flow";
 import { WatchTargetField } from "../target-field";
@@ -42,13 +41,16 @@ interface WatchTargetProviderProps {
   children: ReactNode;
 }
 
-function watchErrorMessage(reason: string | undefined, label: string): string {
+function watchErrorMessage(reason: string | undefined, source: Source): string {
+  const label = watchSourceLabel(source);
   switch (reason) {
     case "already_watching":
       return "You're already watching this.";
     case "needs_account":
       return `Connect an account on ${label} first.`;
     case "invalid":
+      if (source === "web")
+        return "No RSS or Atom feed was found. Check the feed URL.";
       return `Couldn't find that profile on ${label}. Check the link or handle.`;
     default:
       return "Couldn't start watching. Try again.";
@@ -61,7 +63,7 @@ function useWatchTargetState({
   addWatch,
   onAdded,
 }: Omit<WatchTargetProviderProps, "children">) {
-  const label = getSourceDef(source).label;
+  const label = watchSourceLabel(source);
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -70,11 +72,13 @@ function useWatchTargetState({
   const addedTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(addedTimer.current), []);
   const input = value.trim();
-  const detected = watchInputSource(input);
+  const detected = watchInputSource(input, source);
   const mismatch =
     detected.type === "unsupported" ||
     (detected.type === "link" && detected.source !== source)
-      ? `This link isn't from ${label}. Paste a ${label} link or enter a handle.`
+      ? source === "web"
+        ? "Enter a feed URL that starts with http:// or https://."
+        : `This link isn't from ${label}. Paste a ${label} link or enter a handle.`
       : null;
   const needsSession =
     WATCH_NEEDS_SESSION.includes(source) && !connectedSources.includes(source);
@@ -101,9 +105,9 @@ function useWatchTargetState({
         );
         return;
       }
-      setError(watchErrorMessage(res.reason, label));
+      setError(watchErrorMessage(res.reason, source));
     } catch {
-      setError(watchErrorMessage(undefined, label));
+      setError(watchErrorMessage(undefined, source));
     } finally {
       submitting.current = false;
       setBusy(false);
@@ -216,11 +220,15 @@ export function WatchTargetSection() {
         }
       />
       <div className={styles.copy}>
-        <h2 className={styles.title}>Watch on {label}</h2>
+        <h2 className={styles.title}>
+          {source === "web" ? "Watch an RSS Feed" : `Watch on ${label}`}
+        </h2>
         <p className={styles.description}>
-          Enter a handle or paste a {label} link.
+          {source === "web"
+            ? "Paste an RSS or Atom feed URL."
+            : `Enter a handle or paste a ${label} link.`}
           <br />
-          Pond adds new posts to your library.
+          Pond adds new posts to your Library.
         </p>
       </div>
       <div className={styles.field}>
