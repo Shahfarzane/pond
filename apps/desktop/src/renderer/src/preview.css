@@ -23,9 +23,8 @@ body {
 }
 
 .preview-window-chrome button {
-  background: color-mix(in oklab, var(--ds-gray-1) 88%, transparent);
+  background: var(--ds-gray-1);
   box-shadow: var(--ds-shadow-sm);
-  backdrop-filter: blur(16px) saturate(1.2);
 }
 
 #preview-ui button,
@@ -80,17 +79,10 @@ body {
   justify-content: center;
   max-width: calc(100vw - 96px);
   padding: 4px;
-  background: color-mix(in oklab, var(--ds-gray-1) 88%, transparent);
+  background: var(--ds-gray-1);
   border-radius: var(--ds-radius-lg);
   box-shadow: var(--ds-shadow-tooltip);
-  backdrop-filter: blur(18px) saturate(1.2);
   transform: translateX(-50%);
-  transition: background-color var(--ds-duration-fast) var(--ds-easing-standard);
-}
-
-.preview-controls:hover,
-.preview-controls:focus-within {
-  background: color-mix(in oklab, var(--ds-gray-1) 96%, transparent);
 }
 
 body[data-media-type="video"] .preview-controls {
@@ -152,13 +144,11 @@ body[data-media-type="video"] .preview-controls {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body:not([data-reduce-motion="never"]) #image,
-  body:not([data-reduce-motion="never"]) .preview-controls {
+  body:not([data-reduce-motion="never"]) #image {
     transition: none;
   }
 }
 
-body[data-reduce-motion="always"] #image,
-body[data-reduce-motion="always"] .preview-controls {
+body[data-reduce-motion="always"] #image {
   transition: none;
 }
