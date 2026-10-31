@@ -222,7 +222,7 @@ app.on("second-instance", (_event, argv) => {
   /** Showing a window while quitting cancels the quit, and this instance would keep the lock. */
   if (quitPreparing) return;
   if (!launched) {
-    // Too early to open a window; the initial window picks up the stored link.
+    /** Too early to open a window; the initial window picks up the stored link. */
     const url = deepLinkArg(argv);
     if (url) handleDeepLink(url, null);
     return;
@@ -554,7 +554,7 @@ function withDeadline(work: Promise<void>, ms: number): Promise<void> {
 }
 
 if (process.platform === "win32") {
-  // Windows ends the session without emitting before-quit, so flush what cannot be rebuilt.
+  /** Windows ends the session without emitting before-quit, so flush what cannot be rebuilt. */
   app.on("browser-window-created", (_event, win) => {
     win.once("session-end", () => {
       beginQuit();
