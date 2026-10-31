@@ -128,7 +128,7 @@
 
 .type[data-kind="other"],
 .type:not([data-kind]) {
-  --type-bg: rgb(0, 0, 0);
+  --type-bg: black;
 }
 
 .source {
@@ -173,7 +173,7 @@
 }
 
 .item[data-selected] .title {
-  color: light-dark(#000, #fff);
+  color: light-dark(black, white);
 }
 
 .item[data-dimmed] .media,

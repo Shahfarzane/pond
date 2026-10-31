@@ -103,7 +103,7 @@
 
 .group-detail-count {
   font-size: var(--ds-text-sm);
-  font-weight: var(--ds-weight-regular);
+  font-weight: var(--ds-weight-md);
   color: var(--ds-gray-8);
 }
 

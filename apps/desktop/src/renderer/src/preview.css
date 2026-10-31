@@ -12,7 +12,7 @@ body {
   position: relative;
   overflow: hidden;
   color: var(--ds-gray-12);
-  background: #000;
+  background: black;
 }
 
 #preview-ui {
@@ -37,7 +37,7 @@ body {
   display: grid;
   place-items: center;
   overflow: auto;
-  background: #000;
+  background: black;
 }
 
 #image {
@@ -60,7 +60,7 @@ body {
   height: 100%;
   min-height: 0;
   object-fit: contain;
-  background: #000;
+  background: black;
 }
 
 #video[data-size="fill"] {

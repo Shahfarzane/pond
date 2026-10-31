@@ -143,7 +143,7 @@
   box-shadow:
     var(--ds-shadow-md),
     inset 0 0 0 var(--ds-border-width) var(--ds-gray-a3);
-  mask-image: linear-gradient(to bottom, #000 72%, transparent);
+  mask-image: linear-gradient(to bottom, black 72%, transparent);
 }
 
 .field {
@@ -387,7 +387,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  mask-image: linear-gradient(to bottom, #000 60%, transparent);
+  mask-image: linear-gradient(to bottom, black 60%, transparent);
 }
 
 .cue {

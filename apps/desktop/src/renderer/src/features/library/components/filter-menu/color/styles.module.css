@@ -118,8 +118,8 @@
 }
 
 .native-picker:focus-within {
-  outline: 2px solid var(--ds-focus-outline);
-  outline-offset: 1px;
+  outline: var(--ds-focus-width) solid var(--ds-focus-outline);
+  outline-offset: var(--ds-focus-offset);
 }
 
 .range {

@@ -32,7 +32,7 @@
 }
 
 .name[data-index] .text {
-  font-weight: var(--ds-weight-regular);
+  font-weight: var(--ds-weight-md);
   color: var(--ds-gray-11);
 }
 
