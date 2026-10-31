@@ -155,7 +155,7 @@ export const processingSection = defineSection("ai", {
           title: "Style Labels",
           description: "Label styles like minimalist or vintage.",
           keywords: ["style", "aesthetic", "labels", "clip"],
-          visible: (v) => v.enableClip === true,
+          disabled: (v) => v.enableClip !== true,
         },
         {
           control: "switch",
@@ -178,7 +178,7 @@ export const processingSection = defineSection("ai", {
           title: "Generated Titles",
           description: "Fill empty titles without overwriting your edits.",
           keywords: ["title", "automatic", "naming"],
-          visible: (v) => v.enableCaption === true || v.enableOcr === true,
+          disabled: (v) => v.enableCaption !== true && v.enableOcr !== true,
         },
         {
           control: "switch",
@@ -186,7 +186,7 @@ export const processingSection = defineSection("ai", {
           title: "Suggested Tags",
           description: "Suggest tags from your library for you to apply.",
           keywords: ["tags", "suggestions", "auto-tag"],
-          visible: (v) => v.semanticSearch === true,
+          disabled: (v) => v.semanticSearch !== true,
         },
       ],
     },
