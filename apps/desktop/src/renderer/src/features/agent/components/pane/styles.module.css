@@ -31,6 +31,10 @@
   overscroll-behavior: none;
 }
 
+.turn[data-role="user"]:not(:first-child, .time + *) {
+  margin-top: 20px;
+}
+
 .time {
   display: block;
   margin-block: 16px 6px;

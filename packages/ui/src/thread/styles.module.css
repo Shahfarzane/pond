@@ -32,6 +32,15 @@
   margin-inline: auto;
 }
 
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.content > * {
+  flex-shrink: 0;
+}
+
 .footer {
   position: sticky;
   bottom: 0;
