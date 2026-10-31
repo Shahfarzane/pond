@@ -28,11 +28,11 @@
   animation: reveal-in var(--ds-duration-slow) var(--ds-easing-decelerate) both;
 
   &:nth-child(2) {
-    animation-delay: 70ms;
+    animation-delay: var(--ds-duration-fast);
   }
 
   &:nth-child(3) {
-    animation-delay: 140ms;
+    animation-delay: calc(var(--ds-duration-fast) * 2);
   }
 }
 

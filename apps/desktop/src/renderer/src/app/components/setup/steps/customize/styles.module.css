@@ -143,7 +143,7 @@
   box-shadow:
     var(--ds-shadow-md),
     inset 0 0 0 var(--ds-border-width) var(--ds-gray-a3);
-  mask-image: linear-gradient(to bottom, #000 72%, transparent);
+  mask-image: linear-gradient(to bottom, black 72%, transparent);
 }
 
 .field {
@@ -306,7 +306,7 @@
   height: 30px;
   margin-bottom: 7px;
   background: var(--ds-gray-a3);
-  border-radius: 8px;
+  border-radius: var(--ds-radius-md);
 }
 
 .running {
@@ -387,7 +387,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  mask-image: linear-gradient(to bottom, #000 60%, transparent);
+  mask-image: linear-gradient(to bottom, black 60%, transparent);
 }
 
 .cue {
@@ -471,13 +471,13 @@
   > span:first-child {
     top: 0;
     border-top-width: 1px;
-    border-top-left-radius: 6px;
+    border-top-left-radius: var(--ds-radius-sm);
   }
 
   > span:last-child {
     bottom: 0;
     border-bottom-width: 1px;
-    border-bottom-left-radius: 6px;
+    border-bottom-left-radius: var(--ds-radius-sm);
   }
 }
 

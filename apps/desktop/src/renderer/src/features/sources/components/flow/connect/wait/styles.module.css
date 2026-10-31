@@ -7,7 +7,7 @@
 }
 
 .copy[data-state] {
-  animation: reveal 420ms var(--ds-easing-standard) both;
+  animation: reveal var(--ds-duration-slow) var(--ds-easing-standard) both;
 }
 
 .copy {

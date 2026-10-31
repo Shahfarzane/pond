@@ -12,7 +12,7 @@
   opacity: 0.4;
 
   &[data-active] {
-    color: var(--ds-amber-9);
+    color: var(--ds-gold-9);
     opacity: 1;
   }
 }

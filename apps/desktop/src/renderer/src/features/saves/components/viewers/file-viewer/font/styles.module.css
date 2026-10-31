@@ -72,7 +72,7 @@
 
 .waterfall span {
   width: 32px;
-  font-family: var(--ds-font-sans);
+  font-family: var(--ds-ui-font-family);
   font-size: var(--ds-text-xs);
   color: var(--ds-gray-9);
 }

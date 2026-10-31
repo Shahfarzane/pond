@@ -33,7 +33,7 @@
   transform-origin: center;
   transform-box: fill-box;
   translate: calc(var(--x) * (cos(var(--fish-yaw)) - 1) * 1px) 0;
-  animation: wobble 1.8s ease-in-out infinite alternate;
+  animation: wobble 1.8s var(--ds-easing-in-out) infinite alternate;
   animation-delay: calc(var(--lobe) * -0.53s + var(--fish-drift-delay));
 }
 
@@ -79,7 +79,8 @@
 
 .squash {
   transform-origin: 12px 19px;
-  animation: breathe 3.6s ease-in-out infinite var(--fish-drift-delay);
+  animation: breathe 3.6s var(--ds-easing-in-out) infinite
+    var(--fish-drift-delay);
 }
 
 .body {
@@ -131,7 +132,7 @@
 
 .mark[data-activity] {
   & .squash {
-    animation: kick 0.6s ease-in-out infinite alternate;
+    animation: kick 0.6s var(--ds-easing-in-out) infinite alternate;
   }
 
   & .lobe {
@@ -145,11 +146,11 @@
   }
 
   & .fish {
-    animation: muse 2.6s ease-in-out infinite;
+    animation: muse 2.6s var(--ds-easing-in-out) infinite;
   }
 
   & .squash {
-    animation: breathe 2.6s ease-in-out infinite;
+    animation: breathe 2.6s var(--ds-easing-in-out) infinite;
   }
 
   & .face {
@@ -161,7 +162,7 @@
   }
 
   & .bulb {
-    animation: glow 1.2s ease-in-out infinite alternate;
+    animation: glow 1.2s var(--ds-easing-in-out) infinite alternate;
   }
 }
 
@@ -207,7 +208,7 @@
   }
 
   & .face {
-    animation: write 1s ease-in-out infinite alternate;
+    animation: write 1s var(--ds-easing-in-out) infinite alternate;
   }
 }
 
@@ -223,13 +224,13 @@
   }
 
   & .fish {
-    animation: bob 3.6s ease-in-out infinite;
+    animation: bob 3.6s var(--ds-easing-in-out) infinite;
   }
 
   & .squash {
     animation:
       jubilate 2.2s 1,
-      breathe 3.6s ease-in-out 2.2s infinite;
+      breathe 3.6s var(--ds-easing-in-out) 2.2s infinite;
   }
 
   & .heart {
@@ -248,11 +249,11 @@
 
   & .fish {
     rotate: 12deg;
-    animation: bob 5s ease-in-out infinite var(--fish-drift-delay);
+    animation: bob 5s var(--ds-easing-in-out) infinite var(--fish-drift-delay);
   }
 
   & .squash {
-    animation: sigh 5s ease-in-out infinite var(--fish-drift-delay);
+    animation: sigh 5s var(--ds-easing-in-out) infinite var(--fish-drift-delay);
   }
 
   & .face {
