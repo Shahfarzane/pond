@@ -4,6 +4,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalExtensionComposer } from "@lexical/react/LexicalExtensionComposer";
 import { useExtensionDependency } from "@lexical/react/useExtensionComponent";
 import { useSignalValue } from "@lexical/react/useExtensionSignalValue";
+import { Input } from "@pond/ui";
 import { Debouncer } from "@tanstack/pacer";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ViewerHud } from "@/features/saves/components/viewers/hud";
@@ -161,8 +162,9 @@ function TitleField({
   useEffect(() => () => persist.flush(), [persist]);
 
   return (
-    <input
+    <Input.Field
       ref={inputRef}
+      appearance="bare"
       className={styles.title}
       value={draft}
       placeholder={NOTE_TITLE_PLACEHOLDER}

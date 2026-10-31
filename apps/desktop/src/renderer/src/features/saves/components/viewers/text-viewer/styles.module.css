@@ -26,19 +26,11 @@
 
 .title {
   width: 100%;
-  padding: 0;
   margin: 0 0 var(--note-space);
   font-size: var(--ds-text-xl);
   font-weight: var(--ds-weight-xl);
   line-height: 32px;
   color: var(--ds-gray-12);
-  outline: none;
-  background: transparent;
-  border: none;
-}
-
-.title::placeholder {
-  color: var(--ds-gray-8);
 }
 
 .body {
