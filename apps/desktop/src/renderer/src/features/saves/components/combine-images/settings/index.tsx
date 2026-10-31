@@ -130,7 +130,7 @@ export function CombineSettings({
           <IconXmark />
         </Button>
       </header>
-      <div className={styles.scroll}>
+      <div className={styles.scroll} data-scroll-fade="vertical">
         <div className={styles.group}>
           <ToggleGroup
             aria-label="Output"

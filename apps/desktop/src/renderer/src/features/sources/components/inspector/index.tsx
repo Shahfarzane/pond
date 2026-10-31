@@ -335,7 +335,7 @@ export function SourceDetailView({
   const active = resolveSourceDetailPage(model, page);
   if (model.status !== "ready" || !active) {
     return (
-      <div className={styles.page}>
+      <div className={styles.page} data-scroll-fade="vertical">
         <p className={styles.unavailable} role="status">
           {model.status === "loading"
             ? "Loading source details"
@@ -345,7 +345,7 @@ export function SourceDetailView({
     );
   }
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-scroll-fade="vertical">
       {model.effect}
       <Settings.Page>
         {active.bare ? null : (

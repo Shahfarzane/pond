@@ -27,7 +27,11 @@ function Root({
     <div className={cn(styles.root, className)} data-tone={tone} {...props}>
       <div className={styles.bar}>
         <div className={styles.search}>{children}</div>
-        {filters ? <div className={styles.filters}>{filters}</div> : null}
+        {filters ? (
+          <div className={styles.filters} data-scroll-fade="horizontal">
+            {filters}
+          </div>
+        ) : null}
         {actions ? <div className={styles.actions}>{actions}</div> : null}
       </div>
       {below ? <div className={styles.below}>{below}</div> : null}

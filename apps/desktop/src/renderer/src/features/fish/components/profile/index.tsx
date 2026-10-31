@@ -127,17 +127,17 @@ export function FishProfile({
       </Tabs.List>
       <div className={styles.panels}>
         <Tabs.Panel value="details" className={styles.panel}>
-          <Pane.Body className={styles.scroll}>
+          <Pane.Body className={styles.scroll} data-scroll-fade="vertical">
             <Details fish={target} drafts={drafts} />
           </Pane.Body>
         </Tabs.Panel>
         <Tabs.Panel value="library" className={styles.panel}>
-          <Pane.Body className={styles.scroll}>
+          <Pane.Body className={styles.scroll} data-scroll-fade="vertical">
             <Scope fish={target} folders={folders} tagNames={tagNames} />
           </Pane.Body>
         </Tabs.Panel>
         <Tabs.Panel value="activity" className={styles.panel}>
-          <Pane.Body className={styles.scroll}>
+          <Pane.Body className={styles.scroll} data-scroll-fade="vertical">
             <Activity fish={target} />
           </Pane.Body>
         </Tabs.Panel>

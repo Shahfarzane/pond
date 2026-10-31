@@ -153,6 +153,7 @@
   }
 
   /* An inactive scroll timeline (no overflow) leaves both edges at 0, so nothing fades. */
+  /* Never on a Base UI popup or panel: they wait on the element's animations, and these never finish. */
   [data-scroll-fade] {
     --scroll-fade-size: 24px;
     --scroll-fade-start-size: var(--scroll-fade-size);

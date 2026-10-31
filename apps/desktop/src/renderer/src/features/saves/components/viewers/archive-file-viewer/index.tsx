@@ -153,7 +153,7 @@ export function ArchiveFileViewer({
         <div className={styles.status}>Reading archive directory</div>
       ) : null}
       {entries ? (
-        <ul className={styles.list}>
+        <ul className={styles.list} data-scroll-fade="vertical">
           {filtered.map((entry) => (
             <li key={entry.name} className={styles.row}>
               <span>{entry.name}</span>

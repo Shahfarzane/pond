@@ -61,7 +61,7 @@ function TextViewerSession({ save }: { save: Save }) {
   }, [save]);
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-scroll-fade="vertical">
       <ChromePortal slot="top">
         <ViewerHud.Bar
           label="Text"

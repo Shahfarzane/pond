@@ -53,7 +53,7 @@ export function ToolList({ status, onChanged, onClose }: ToolListProps) {
           </Dialog.Header>
           <Dialog.Content className={styles.content}>
             {tools.length ? (
-              <ul className={styles.list}>
+              <ul className={styles.list} data-scroll-fade="vertical">
                 {tools.map((tool) => (
                   <ToolRow
                     key={tool.name}

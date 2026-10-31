@@ -58,7 +58,7 @@ export function RoutineView({
           <IconXmark />
         </Button>
       </Pane.Header>
-      <Pane.Body className={styles.scroll}>
+      <Pane.Body className={styles.scroll} data-scroll-fade="vertical">
         <h2 className={styles.title}>{routine.name}</h2>
         <Section title="Instruction" collapsible={false}>
           <p className={styles.text}>{routine.instruction}</p>

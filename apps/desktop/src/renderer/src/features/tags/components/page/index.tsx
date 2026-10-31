@@ -517,7 +517,7 @@ export function TagsPage() {
               </Sidebar.Root>
             </aside>
 
-            <main className={styles.main}>
+            <main className={styles.main} data-scroll-fade="vertical">
               {activeGroupRow ? (
                 <section className={styles["group-detail"]}>
                   <div className={styles["group-detail-title"]}>

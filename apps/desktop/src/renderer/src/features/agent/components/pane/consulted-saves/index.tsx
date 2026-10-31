@@ -128,7 +128,7 @@ export function ConsultedSaves({
   );
   return (
     <section className={styles.card} aria-label="Consulted Saves">
-      <div className={styles.rows}>
+      <div className={styles.rows} data-scroll-fade="vertical">
         {items.slice(0, 3).map(renderRow)}
         <Reveal visible={expanded}>
           <div className={styles.more}>{items.slice(3).map(renderRow)}</div>
