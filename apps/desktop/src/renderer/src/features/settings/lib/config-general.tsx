@@ -273,7 +273,8 @@ export const generalSection = defineCustomSection({
           control: "switch",
           key: "autoInstall",
           title: "Automatic Updates",
-          description: "Download in the background. Apply on next launch.",
+          description:
+            "Download updates in the background and install them when Pond quits.",
           apply: () => runApply("updates.applyPrefs"),
         },
         {
