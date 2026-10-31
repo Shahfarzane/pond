@@ -308,6 +308,8 @@ export function ProviderConnection({
                         ref={keyField}
                         type={revealed ? "text" : "password"}
                         autoComplete="off"
+                        autoCapitalize="none"
+                        spellCheck={false}
                         aria-label="API Key"
                         disabled={saving}
                         placeholder={`Enter your ${catalog.provider} API Key`}
@@ -345,6 +347,9 @@ export function ProviderConnection({
                       <Input.Field
                         ref={endpointField}
                         type={catalog.id === "azure" ? "text" : "url"}
+                        autoComplete="off"
+                        autoCapitalize="none"
+                        spellCheck={false}
                         aria-label={endpointLabel}
                         placeholder={endpointLabel}
                         disabled={saving}
