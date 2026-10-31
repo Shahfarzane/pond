@@ -21,6 +21,7 @@ import {
 import { ExportSettings } from "./export-settings";
 import { ExportField } from "./fields";
 import { type ExportRow, FileList } from "./file-list";
+import { SavePreset } from "./save-preset";
 import styles from "./styles.module.css";
 import { useConversionJob } from "./use-conversion-job";
 
@@ -115,18 +116,6 @@ export function ConversionDialog({
       setPreset(saved);
       setPresets(await window.pond.query("conversion.presets", {}));
     }, "Couldn't save the preset. Try again.");
-  }
-  function promptPreset() {
-    Dialog.prompt({
-      title: "Save Preset",
-      description:
-        "Name these settings to reuse them the next time you export.",
-      confirmLabel: "Save",
-      initialValue: preset.name,
-      onConfirm: async (name) => {
-        if (name.trim()) await save({ ...preset, name: name.trim() });
-      },
-    });
   }
   const count = `${included.length} ${included.length === 1 ? "save" : "saves"}`;
   const skipped = rows.length - exportIds.length;
@@ -224,17 +213,15 @@ export function ConversionDialog({
           <Dialog.Footer
             leading={
               converting ? (
-                <Button
-                  variant="ghost"
+                <SavePreset
+                  initialName={preset.name}
                   disabled={
                     busy ||
                     running ||
                     !ConversionPresetSchema.safeParse(preset).success
                   }
-                  onClick={promptPreset}
-                >
-                  Save Preset
-                </Button>
+                  onSave={(name) => save({ ...preset, name })}
+                />
               ) : undefined
             }
           >
