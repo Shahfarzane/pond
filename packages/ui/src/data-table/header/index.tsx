@@ -29,10 +29,10 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { SelectAllCell, stop } from "./cells";
-import { useDataTable } from "./context";
+import { SelectAllCell, stop } from "../cells";
+import { useDataTable } from "../context";
+import type { HeaderContext, TableColumn } from "../types";
 import styles from "./styles.module.css";
-import type { HeaderContext, TableColumn } from "./types";
 
 const COLUMN_DROP_ANIMATION = {
   duration: 150,
@@ -173,7 +173,7 @@ function HeaderCell<T extends RowData>({
             }
           : undefined
       }
-      className={styles.header}
+      className={styles.cell}
       data-align={column.align}
       data-pinned={pinned || undefined}
       data-dragging={isDragging || undefined}
@@ -217,7 +217,7 @@ function HeaderCell<T extends RowData>({
           {sorted ? <SortCaret sorted={sorted} /> : null}
         </button>
       ) : (
-        <span className={styles["header-static"]}>{content}</span>
+        <span className={styles.static}>{content}</span>
       )}
       {resizeHandle}
     </div>
@@ -233,14 +233,12 @@ function HeaderOverlay<T extends RowData>({
   const sorted = meta.getSorted(column.id);
   return (
     <div
-      className={styles.header}
+      className={styles.cell}
       data-align={column.align}
       data-overlay
       aria-hidden
     >
-      <span className={styles["header-static"]}>
-        {headerContent(column, sorted)}
-      </span>
+      <span className={styles.static}>{headerContent(column, sorted)}</span>
       {sorted ? <SortCaret sorted={sorted} /> : null}
     </div>
   );
@@ -304,15 +302,11 @@ export function DataTableHeader<T extends RowData>() {
       }}
     >
       <SortableContext items={ids} strategy={horizontalListSortingStrategy}>
-        <div
-          ref={meta.headerRef}
-          className={styles["header-scroll"]}
-          role="rowgroup"
-        >
+        <div ref={meta.headerRef} className={styles.scroll} role="rowgroup">
           <div
             role="row"
             aria-rowindex={1}
-            className={styles["header-row"]}
+            className={styles.row}
             style={{ gridTemplateColumns: meta.gridTemplate }}
           >
             {meta.selectionEnabled && meta.selectionCheckboxes ? (
@@ -323,7 +317,7 @@ export function DataTableHeader<T extends RowData>() {
               />
             ) : null}
             {meta.expansionEnabled ? (
-              <div role="columnheader" className={styles.header} aria-hidden />
+              <div role="columnheader" className={styles.cell} aria-hidden />
             ) : null}
             {meta.columns.map((column, index) => (
               <HeaderCell
