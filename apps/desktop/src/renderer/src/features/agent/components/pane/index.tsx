@@ -226,6 +226,8 @@ function AgentPaneContent({
                 <Fragment key={message.id}>
                   {stamp}
                   <article
+                    className={styles.turn}
+                    data-role={message.role}
                     data-thread-mark={
                       message.role === "user" ? message.id : undefined
                     }
