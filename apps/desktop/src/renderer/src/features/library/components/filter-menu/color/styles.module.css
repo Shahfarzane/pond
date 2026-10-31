@@ -27,7 +27,7 @@
 }
 
 .hue {
-  border-radius: 2px;
+  border-radius: var(--ds-radius-xs);
 }
 
 .hue-thumb {

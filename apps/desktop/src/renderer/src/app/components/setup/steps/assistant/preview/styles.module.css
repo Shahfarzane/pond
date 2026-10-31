@@ -246,8 +246,8 @@
   color: var(--ds-gray-1);
   background: var(--ds-gray-12);
   transition:
-    transform 120ms var(--ds-easing-standard),
-    opacity 120ms var(--ds-easing-standard);
+    transform var(--ds-duration-snap) var(--ds-easing-standard),
+    opacity var(--ds-duration-snap) var(--ds-easing-standard);
 
   &[data-pressed] {
     opacity: 0.85;

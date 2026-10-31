@@ -306,7 +306,7 @@
   height: 30px;
   margin-bottom: 7px;
   background: var(--ds-gray-a3);
-  border-radius: 8px;
+  border-radius: var(--ds-radius-md);
 }
 
 .running {
@@ -471,13 +471,13 @@
   > span:first-child {
     top: 0;
     border-top-width: 1px;
-    border-top-left-radius: 6px;
+    border-top-left-radius: var(--ds-radius-sm);
   }
 
   > span:last-child {
     bottom: 0;
     border-bottom-width: 1px;
-    border-bottom-left-radius: 6px;
+    border-bottom-left-radius: var(--ds-radius-sm);
   }
 }
 

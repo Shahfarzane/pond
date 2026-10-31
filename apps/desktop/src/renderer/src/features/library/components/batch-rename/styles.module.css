@@ -126,7 +126,7 @@
 .mark {
   padding: 1px 0;
   color: inherit;
-  border-radius: 2px;
+  border-radius: var(--ds-radius-xs);
 
   &[data-tone="find"] {
     background: var(--ds-yellow-4);

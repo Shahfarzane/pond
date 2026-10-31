@@ -36,7 +36,8 @@
   color: var(--epub-ink);
   background: var(--epub-cover);
   border: 1px solid var(--epub-edge);
-  border-radius: 3px 9px 9px 3px;
+  border-radius: var(--ds-radius-xs) var(--ds-radius-lg) var(--ds-radius-lg)
+    var(--ds-radius-xs);
   box-shadow:
     -5px 0 0 var(--epub-spine),
     0 10px 20px var(--ds-black-a4);

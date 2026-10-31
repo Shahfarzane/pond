@@ -184,7 +184,7 @@
   width: 4px;
   content: "";
   background: var(--ds-gray-6);
-  border-radius: 2px;
+  border-radius: var(--ds-radius-full);
 }
 
 .code {

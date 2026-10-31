@@ -33,7 +33,7 @@
   width: 16px;
   height: 16px;
   color: var(--ds-gray-10);
-  transition: transform var(--ds-duration-fast, 0.12s) ease;
+  transition: transform var(--ds-duration-fast) var(--ds-easing-standard);
 }
 
 .trigger[data-panel-open] .caret,
