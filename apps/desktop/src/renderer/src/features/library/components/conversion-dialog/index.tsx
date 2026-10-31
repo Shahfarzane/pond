@@ -13,6 +13,7 @@ import {
 } from "@/features/library/state/conversion-dialog";
 import { ensureSaves, savesStore } from "@/features/saves/pool";
 import { errorCopy } from "@/shared/lib/error-copy";
+import { formatPlural } from "@/shared/lib/format";
 import {
   canConvert,
   formatLabel,
@@ -131,7 +132,7 @@ export function ConversionDialog({
       setPresets(await window.pond.query("conversion.presets", {}));
     }, "Couldn't save the preset. Try again.");
   }
-  const count = `${included.length} ${included.length === 1 ? "save" : "saves"}`;
+  const count = formatPlural(included.length, { one: "save", other: "saves" });
   const skipped = rows.length - exportIds.length;
   return (
     <Dialog.Root
@@ -209,7 +210,7 @@ export function ConversionDialog({
             <div className={styles.files}>
               {skipped > 0 ? (
                 <p className={styles.skipped} role="status">
-                  {`${skipped} ${skipped === 1 ? "save" : "saves"} can't be converted and will be skipped.`}
+                  {`${formatPlural(skipped, { one: "save", other: "saves" })} can't be converted and will be skipped.`}
                 </p>
               ) : null}
               <FileList
