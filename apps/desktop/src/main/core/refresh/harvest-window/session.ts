@@ -1,3 +1,4 @@
+import { setTimeout as sleep } from "node:timers/promises";
 import type { ConnectedAccount, Source } from "@pond/schema/db";
 import { connectsByHandle } from "@pond/schema/sources";
 import { type Cookie, session, shell } from "electron";
@@ -12,7 +13,6 @@ import { homeUrlForSource } from "../sources";
 import { HARVEST_TIMEOUT_MS, NAV_TIMEOUT_MS, PARTITION } from "./constants";
 import { looksLikeAuthWall, navigateWithTimeout } from "./navigation";
 import { leaseWindow } from "./pool";
-import { sleep } from "./util";
 
 type SignInMode = "external";
 

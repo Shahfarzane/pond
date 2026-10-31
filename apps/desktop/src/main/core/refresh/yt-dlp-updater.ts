@@ -11,6 +11,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import { join } from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 import log from "electron-log/main.js";
 import { z } from "zod";
 import { killProcessTree } from "../../lib/process-tree";
@@ -297,7 +298,7 @@ export async function renameWithRetry(
   const {
     rename: move = rename,
     platform = process.platform,
-    sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+    sleep = delay,
   } = deps;
   for (let attempt = 1; ; attempt++) {
     try {
