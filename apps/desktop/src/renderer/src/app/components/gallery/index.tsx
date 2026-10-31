@@ -438,7 +438,7 @@ export function Gallery() {
                       <Prompt.Freeform
                         letter="C"
                         aria-label="Your answer"
-                        placeholder="Other…"
+                        placeholder="Other"
                       />
                     </Prompt.Choices>
                   </Prompt.Body>

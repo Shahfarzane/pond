@@ -84,7 +84,7 @@ export function KoiQuestion({
                 selected={choice === FREEFORM}
                 disabled={busy}
                 aria-label="Your answer"
-                placeholder="Other…"
+                placeholder="Other"
                 value={text}
                 onFocus={() => setChoice(FREEFORM)}
                 onChange={(event) => {
