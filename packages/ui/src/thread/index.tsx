@@ -187,11 +187,9 @@ function Rail({ marks, viewport, className, ...props }: RailProps) {
             delay={0}
             label={
               <span className={styles.preview}>
-                <span className={styles["preview-title"]}>{mark.title}</span>
+                <span className={styles.title}>{mark.title}</span>
                 {mark.description ? (
-                  <span className={styles["preview-description"]}>
-                    {mark.description}
-                  </span>
+                  <span className={styles.description}>{mark.description}</span>
                 ) : null}
               </span>
             }

@@ -38,7 +38,7 @@ function Bubble({ className, trailing, ...props }: BubbleProps) {
   );
   if (!trailing) return bubble;
   return (
-    <div className={styles["bubble-row"]}>
+    <div className={styles.row}>
       {bubble}
       {trailing}
     </div>

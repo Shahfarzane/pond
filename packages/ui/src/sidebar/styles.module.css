@@ -125,7 +125,7 @@ button.label:hover {
   background: var(--ds-gray-a3);
 }
 
-.group-header {
+.heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -247,7 +247,7 @@ button.label:hover {
   }
 }
 
-.item-label {
+.text {
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -255,7 +255,7 @@ button.label:hover {
   white-space: nowrap;
 }
 
-.item-detail {
+.detail {
   display: block;
   min-width: 0;
   overflow: hidden;
