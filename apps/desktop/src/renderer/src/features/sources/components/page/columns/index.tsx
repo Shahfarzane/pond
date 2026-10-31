@@ -106,7 +106,11 @@ export const sourcesColumns: TableColumn<SourceTableRow>[] = [
     accessor: (row) => row.name,
     width: "minmax(200px, 1fr)",
     reorderable: true,
-    cell: (row) => <span className={styles.name}>{row.name}</span>,
+    cell: (row) => (
+      <span className={styles.name} title={row.name}>
+        {row.name}
+      </span>
+    ),
   },
   {
     id: "items",

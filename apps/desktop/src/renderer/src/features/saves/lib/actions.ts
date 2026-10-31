@@ -322,10 +322,6 @@ export async function pasteTags(save: Save): Promise<void> {
   const added = next.length - save.tags.length;
   if (added === 0) return;
   await setSaveTags(save.id, next);
-  notify({
-    id: "paste-tags",
-    title: "Tags pasted",
-  });
 }
 
 export async function exportFile(

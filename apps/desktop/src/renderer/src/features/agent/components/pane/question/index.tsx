@@ -114,7 +114,7 @@ export function KoiQuestion({
             loading={busy}
             onClick={() => void submit()}
           >
-            {busy ? "Sending" : "Continue"}
+            Continue
           </Button>
         </Prompt.Footer>
       </Reveal>

@@ -185,7 +185,9 @@ export function WorkspaceMenu() {
               alt=""
             />
           </span>
-          <span className={styles.name}>{name}</span>
+          <span className={styles.name} title={name}>
+            {name}
+          </span>
           <IconChevronDown size={12} className={styles.chevron} aria-hidden />
         </Menu.Trigger>
         <Menu.Portal>

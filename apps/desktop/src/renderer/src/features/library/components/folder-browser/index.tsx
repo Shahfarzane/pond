@@ -14,12 +14,12 @@ import { saveFolderPresentation } from "@/features/library/state/folder-presenta
 import { folders, useFolders } from "@/features/library/state/folders";
 import { Card, useDisplayPrefs, useItemInfo } from "@/features/saves";
 import { ensureSaves, useSave } from "@/features/saves/pool";
+import { ButtonLink } from "@/shared/components/button-link";
 import {
   SpecContextMenu,
   SpecMenu,
 } from "@/shared/components/spec-context-menu";
 import { useResolvedTheme } from "@/shared/hooks/use-resolved-theme";
-import { getAppRouter } from "@/shared/lib/app-router";
 import {
   FOLDER_MENU_ICONS,
   FOLDER_SWATCHES,
@@ -386,13 +386,9 @@ export function FolderBrowser({
             {downloading > 0 ? (
               <span className={styles.downloading} role="status">
                 {`Downloading ${formatPlural(downloading, SAVES)}`}
-                <Button
-                  size="xs"
-                  variant="text"
-                  onClick={() => getAppRouter()?.history.push("/downloads")}
-                >
+                <ButtonLink to="/downloads" size="xs" variant="text">
                   Open Downloads
-                </Button>
+                </ButtonLink>
               </span>
             ) : null}
           </div>

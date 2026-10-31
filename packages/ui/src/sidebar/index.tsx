@@ -59,8 +59,28 @@ function Item({ className, size = "md", onClick, ...props }: ItemProps) {
 
 interface ItemLabelProps extends React.ComponentPropsWithoutRef<"span"> {}
 
-function ItemLabel({ className, ...props }: ItemLabelProps) {
-  return <span className={cn(styles["item-label"], className)} {...props} />;
+function ItemLabel({
+  className,
+  title,
+  onPointerEnter,
+  ...props
+}: ItemLabelProps) {
+  return (
+    <span
+      className={cn(styles["item-label"], className)}
+      title={title}
+      onPointerEnter={(event) => {
+        if (title === undefined) {
+          const label = event.currentTarget;
+          if (label.scrollWidth > label.clientWidth)
+            label.title = label.textContent ?? "";
+          else label.removeAttribute("title");
+        }
+        onPointerEnter?.(event);
+      }}
+      {...props}
+    />
+  );
 }
 
 interface ItemDetailProps extends React.ComponentPropsWithoutRef<"span"> {}

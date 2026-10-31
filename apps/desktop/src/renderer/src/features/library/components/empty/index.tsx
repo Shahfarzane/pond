@@ -13,7 +13,7 @@ import { Button, Empty } from "@pond/ui";
 import { libraryChrome } from "@/features/library/state/library-chrome";
 import type { SaveListMode } from "@/features/saves";
 import { openSources } from "@/features/sources";
-import { getAppRouter } from "@/shared/lib/app-router";
+import { ButtonLink } from "@/shared/components/button-link";
 import { formatPlural } from "@/shared/lib/format";
 import styles from "./styles.module.css";
 
@@ -51,13 +51,9 @@ export function TrashEmpty() {
         Deleted saves appear here until they are removed permanently.
       </Empty.Description>
       <Empty.Action>
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => getAppRouter()?.history.push("/")}
-        >
+        <ButtonLink to="/" variant="primary" size="sm">
           Open Library
-        </Button>
+        </ButtonLink>
       </Empty.Action>
     </Empty.Root>
   );
@@ -86,16 +82,14 @@ export function UncategorizedEmpty() {
         Saves that aren't in a folder appear here.
       </Empty.Description>
       <Empty.Action>
-        <Button
+        <ButtonLink
+          to="/"
           variant="primary"
           size="sm"
-          onClick={() => {
-            libraryChrome.setNav({ kind: "all" });
-            getAppRouter()?.history.push("/");
-          }}
+          onClick={() => libraryChrome.setNav({ kind: "all" })}
         >
           Open Library
-        </Button>
+        </ButtonLink>
       </Empty.Action>
     </Empty.Root>
   );
@@ -115,13 +109,9 @@ export function FolderEmpty({ downloading = 0 }: { downloading?: number }) {
           They appear in this folder as each download finishes.
         </Empty.Description>
         <Empty.Action>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => getAppRouter()?.history.push("/downloads")}
-          >
+          <ButtonLink to="/downloads" variant="primary" size="sm">
             Open Downloads
-          </Button>
+          </ButtonLink>
         </Empty.Action>
       </Empty.Root>
     );
@@ -175,13 +165,9 @@ export function LibrarySectionEmpty({ mode }: { mode: LibrarySection }) {
       <Empty.Title>{content.title}</Empty.Title>
       <Empty.Description>{content.description}</Empty.Description>
       <Empty.Action>
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => getAppRouter()?.history.push("/")}
-        >
+        <ButtonLink to="/" variant="primary" size="sm">
           Open Library
-        </Button>
+        </ButtonLink>
       </Empty.Action>
     </Empty.Root>
   );

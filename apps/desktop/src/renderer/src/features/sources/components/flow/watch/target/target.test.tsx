@@ -82,7 +82,7 @@ async function finishAdding() {
 it("is a plain input that only submits on Watch", async () => {
   vi.useFakeTimers({ toFake: ["setTimeout"] });
   await render();
-  expect(watchButton().disabled).toBe(true);
+  expect(watchButton().disabled).toBe(false);
   await type("drumarjohnson");
   expect(host.querySelector('[role="group"]')).toBeNull();
   expect(addWatch).not.toHaveBeenCalled();
@@ -119,7 +119,7 @@ it("adds a feed Watch without a connected account", async () => {
 it("blocks a feed handle and explains an invalid feed response", async () => {
   await render("web");
   await type("person");
-  expect(watchButton().disabled).toBe(true);
+  expect(watchButton().disabled).toBe(false);
   await submit();
   expect(addWatch).not.toHaveBeenCalled();
   addWatch.mockResolvedValueOnce({ ok: false, reason: "invalid" });
@@ -134,9 +134,24 @@ it("rejects a link from another source", async () => {
   await render("instagram", ["instagram"]);
   await type("https://youtube.com/@alice");
   expect(host.textContent).toContain("This link isn't from Instagram.");
-  expect(watchButton().disabled).toBe(true);
+  expect(watchButton().disabled).toBe(false);
   await submit();
   expect(addWatch).not.toHaveBeenCalled();
+  expect(document.activeElement).toBe(field());
+});
+
+it("explains an empty submit beside the field and focuses it", async () => {
+  await render();
+  field().blur();
+  await submit();
+  expect(addWatch).not.toHaveBeenCalled();
+  expect(host.querySelector('[role="alert"]')?.textContent).toBe(
+    "Enter a handle or paste a YouTube link.",
+  );
+  expect(field().getAttribute("aria-invalid")).toBe("true");
+  expect(document.activeElement).toBe(field());
+  await type("alice");
+  expect(host.querySelector('[role="alert"]')).toBeNull();
 });
 
 it("blocks Instagram watches until that account is connected", async () => {

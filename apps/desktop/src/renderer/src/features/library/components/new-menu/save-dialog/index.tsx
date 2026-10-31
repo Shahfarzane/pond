@@ -16,9 +16,15 @@ export function SaveDialog({
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const submitting = useRef(false);
+  const field = useRef<HTMLTextAreaElement>(null);
 
   async function submit() {
     if (submitting.current) return;
+    if (!text.trim()) {
+      setError("Add at least one link.");
+      field.current?.focus();
+      return;
+    }
     submitting.current = true;
     setBusy(true);
     setError(null);
@@ -67,9 +73,12 @@ export function SaveDialog({
                 <Field.Label>Links</Field.Label>
                 <Input.Root size="md" className={styles.control}>
                   <Field.Control
-                    render={<Input.Textarea />}
+                    render={<Input.Textarea ref={field} />}
                     value={text}
-                    onValueChange={setText}
+                    onValueChange={(value) => {
+                      setText(value);
+                      setError(null);
+                    }}
                     disabled={busy}
                     autoFocus
                     aria-invalid={!!error}
@@ -93,12 +102,8 @@ export function SaveDialog({
             </Dialog.Content>
             <Dialog.Footer>
               <Dialog.Cancel disabled={busy} />
-              <Button
-                type="submit"
-                disabled={busy || !text.trim()}
-                loading={busy}
-              >
-                {busy ? "Importing" : "Import"}
+              <Button type="submit" loading={busy}>
+                Import
               </Button>
             </Dialog.Footer>
           </form>

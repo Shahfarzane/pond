@@ -263,13 +263,7 @@ export function CombineSettings({
           disabled={busy || count < 2}
           onClick={onSubmit}
         >
-          {busy
-            ? exporting
-              ? "Exporting"
-              : "Creating"
-            : exporting
-              ? "Export Image"
-              : "Create Image"}
+          {exporting ? "Export Image" : "Create Image"}
         </Button>
       </footer>
     </section>

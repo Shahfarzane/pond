@@ -77,7 +77,7 @@ export function RaycastRow() {
           loading={busy}
           onClick={() => void copyToken()}
         >
-          {busy ? "Copying" : copied ? "Copied" : "Copy Token"}
+          {copied ? "Copied" : "Copy Token"}
         </Button>
         <Button
           size="sm"

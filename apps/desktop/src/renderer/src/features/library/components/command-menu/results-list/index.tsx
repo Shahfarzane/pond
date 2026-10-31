@@ -94,12 +94,15 @@ const EntryRow = memo(function EntryRow({
       <span className={styles.copy}>
         <span
           className={styles.label}
+          title={entry.label}
           data-matched={ranges.length > 0 || undefined}
         >
           <Highlight text={entry.label} ranges={ranges} />
         </span>
         {entry.detail ? (
-          <span className={styles.detail}>{entry.detail}</span>
+          <span className={styles.detail} title={entry.detail}>
+            {entry.detail}
+          </span>
         ) : null}
       </span>
       {entry.shortcut ? (
