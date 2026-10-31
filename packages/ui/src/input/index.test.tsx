@@ -16,4 +16,16 @@ describe("Input", () => {
     expect(markup).toContain('data-slot="field"');
     expect(markup).toContain('data-slot="suffix"');
   });
+
+  it("marks bare fields so inline editors drop the field chrome", () => {
+    const markup = renderToStaticMarkup(
+      <>
+        <Input.Field appearance="bare" aria-label="Title" />
+        <Input.Textarea appearance="bare" aria-label="Note" />
+        <Input.Field aria-label="Name" />
+      </>,
+    );
+
+    expect(markup.match(/data-appearance="bare"/g)).toHaveLength(2);
+  });
 });

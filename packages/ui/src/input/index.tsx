@@ -6,6 +6,8 @@ import styles from "./styles.module.css";
 
 type InputSize = "xs" | "sm" | "md" | "lg" | "xl";
 type InputVariant = "primary" | "secondary" | "borderless";
+/** `bare` drops the field chrome for inline editors that must match the text they replace. */
+type FieldAppearance = "default" | "bare";
 
 function Root({
   className,
@@ -65,15 +67,16 @@ function Suffix({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-const Field = forwardRef<HTMLInputElement, Base.Props>(function Field(
-  { className, onKeyDown, ...props },
-  ref,
-) {
+const Field = forwardRef<
+  HTMLInputElement,
+  Base.Props & { appearance?: FieldAppearance }
+>(function Field({ className, appearance, onKeyDown, ...props }, ref) {
   return (
     <Base
       {...props}
       ref={ref}
       data-slot="field"
+      data-appearance={appearance === "bare" ? appearance : undefined}
       className={cn(styles.field, className)}
       onKeyDown={(event) => {
         onKeyDown?.(event);
@@ -88,10 +91,12 @@ const Textarea = forwardRef<
   React.ComponentProps<"textarea"> & {
     onValueChange?: (value: string) => void;
     padding?: "default" | "comfortable";
+    appearance?: FieldAppearance;
   }
 >(function Textarea(
   {
     className,
+    appearance,
     rows = 5,
     onChange,
     onValueChange,
@@ -108,6 +113,7 @@ const Textarea = forwardRef<
       data-slot="field"
       data-multiline
       data-padding={padding === "comfortable" ? padding : undefined}
+      data-appearance={appearance === "bare" ? appearance : undefined}
       rows={rows}
       className={cn(styles.field, className)}
       onChange={(event) => {

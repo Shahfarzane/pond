@@ -49,6 +49,15 @@ describe("PickerPanel", () => {
     expect(markup).toContain('data-slot="picker-label"');
   });
 
+  it("can limit the row fill to the active row", () => {
+    const markup = renderToStaticMarkup(
+      <PickerPanel.Item highlight="active">Open</PickerPanel.Item>,
+    );
+
+    expect(markup).toContain('data-highlight="active"');
+    expect(css).toContain('.item:not([data-highlight="active"]):hover::before');
+  });
+
   it("keeps static and collapsible section headers on the same type scale", () => {
     const sharedHeaders = declarations(".group-label,\n.section-button");
     const sectionButton = declarations(".section-button", 1);

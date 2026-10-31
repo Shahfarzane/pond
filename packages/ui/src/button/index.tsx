@@ -13,7 +13,8 @@ export interface ButtonProps extends Base.Props {
     | "text"
     | "accent"
     | "destructive"
-    | "link";
+    | "link"
+    | "bare";
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   rounding?: "default" | "full";
   icon?: boolean;

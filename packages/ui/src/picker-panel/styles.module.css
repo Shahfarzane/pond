@@ -177,7 +177,7 @@
   transition: opacity var(--ds-duration-fast) var(--ds-easing-standard);
 }
 
-.item:hover::before,
+.item:not([data-highlight="active"]):hover::before,
 .item[data-active]::before {
   opacity: 1;
 }
