@@ -108,6 +108,8 @@
 }
 
 .breadcrumbs .crumb {
+  --button-icon-size: 16px;
+
   gap: 6px;
   height: 28px;
   padding: 0 6px;
@@ -118,11 +120,8 @@
   color: var(--ds-gray-12);
 }
 
-.crumb svg,
 .current svg {
   flex: none;
-  width: 16px;
-  height: 16px;
 }
 
 .label {
