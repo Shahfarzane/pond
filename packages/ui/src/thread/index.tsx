@@ -22,7 +22,12 @@ function Root({ className, ...props }: ComponentPropsWithoutRef<"div">) {
 const Viewport = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<"div">>(
   function Viewport({ className, ...props }, ref) {
     return (
-      <div ref={ref} className={cn(styles.viewport, className)} {...props} />
+      <div
+        ref={ref}
+        className={cn(styles.viewport, className)}
+        data-scroll-fade="vertical"
+        {...props}
+      />
     );
   },
 );
@@ -170,6 +175,7 @@ function Rail({ marks, viewport, className, ...props }: RailProps) {
     <nav
       aria-label="Conversation Timeline"
       className={cn(styles.rail, className)}
+      data-scroll-fade="vertical"
       {...props}
     >
       <Tooltip.Group>

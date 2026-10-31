@@ -288,14 +288,26 @@ function Body({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function Sidebar({ className, ...props }: React.ComponentProps<"div">) {
-  return <div {...props} className={cn(styles.sidebar, className)} />;
+  return (
+    <div
+      data-scroll-fade="vertical"
+      {...props}
+      className={cn(styles.sidebar, className)}
+    />
+  );
 }
 
 function Collection({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  return <div {...props} className={cn(styles.collection, className)} />;
+  return (
+    <div
+      data-scroll-fade="vertical"
+      {...props}
+      className={cn(styles.collection, className)}
+    />
+  );
 }
 
 function Group({ className, ...props }: React.ComponentProps<"div">) {

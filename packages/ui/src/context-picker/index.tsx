@@ -40,7 +40,11 @@ export function ContextPicker({
           }}
         />
       </Input.Root>
-      <fieldset className={styles.list} aria-label="Context">
+      <fieldset
+        className={styles.list}
+        aria-label="Context"
+        data-scroll-fade="vertical"
+      >
         {visible.length ? (
           visible.map((item) => (
             <Button

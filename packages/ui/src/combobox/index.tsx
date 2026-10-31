@@ -159,7 +159,13 @@ function Arrow({ className, ...props }: Base.Arrow.Props) {
 }
 
 function List({ className, ...props }: Base.List.Props) {
-  return <Base.List className={cn(styles.list, className)} {...props} />;
+  return (
+    <Base.List
+      className={cn(styles.list, className)}
+      data-scroll-fade="vertical"
+      {...props}
+    />
+  );
 }
 
 function Empty({ className, ...props }: Base.Empty.Props) {

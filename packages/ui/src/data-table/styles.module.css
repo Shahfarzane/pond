@@ -15,6 +15,7 @@
   overflow: auto;
 
   &[data-header] {
+    --scroll-fade-start-size: 0px;
     scroll-padding-top: var(--data-table-header-height, 40px);
   }
 
