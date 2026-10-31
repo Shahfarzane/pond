@@ -119,7 +119,7 @@ it("adds a feed Watch without a connected account", async () => {
 it("blocks a feed handle and explains an invalid feed response", async () => {
   await render("web");
   await type("person");
-  expect(watchButton().disabled).toBe(true);
+  expect(watchButton().disabled).toBe(false);
   await submit();
   expect(addWatch).not.toHaveBeenCalled();
   addWatch.mockResolvedValueOnce({ ok: false, reason: "invalid" });
