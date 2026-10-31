@@ -90,8 +90,8 @@
   z-index: 1;
   background: linear-gradient(var(--pin-tint), var(--pin-tint)), var(--pin-bg);
   transition:
-    --pin-bg var(--ds-duration-fast, 0.12s) ease,
-    --pin-tint var(--ds-duration-fast, 0.12s) ease;
+    --pin-bg var(--ds-duration-fast) var(--ds-easing-standard),
+    --pin-tint var(--ds-duration-fast) var(--ds-easing-standard);
 
   &::before,
   &::after {
@@ -116,7 +116,7 @@
     background:
       linear-gradient(to right, var(--pin-tint), transparent),
       linear-gradient(to right, var(--pin-bg), transparent);
-    transition: opacity var(--ds-duration-fast, 0.12s) ease;
+    transition: opacity var(--ds-duration-fast) var(--ds-easing-standard);
   }
 }
 
@@ -164,7 +164,7 @@
   width: 2px;
   content: "";
   background: transparent;
-  border-radius: 1px;
+  border-radius: var(--ds-radius-full);
 }
 
 .resize-handle:hover::after,
@@ -211,7 +211,7 @@
   cursor: var(--ds-cursor-interactive, pointer);
   background: transparent;
   border: 0;
-  transition: color var(--ds-duration-fast, 0.12s) ease;
+  transition: color var(--ds-duration-fast) var(--ds-easing-standard);
 }
 
 .sort-button:hover,
@@ -244,7 +244,7 @@
   padding-inline: var(--data-table-inset, 0px);
   cursor: var(--ds-cursor-interactive, pointer);
   border-radius: var(--ds-radius-md);
-  transition: background var(--ds-duration-fast, 0.12s) ease;
+  transition: background var(--ds-duration-fast) var(--ds-easing-standard);
 }
 
 .row:hover,
@@ -341,7 +341,7 @@
   cursor: var(--ds-cursor-interactive, pointer);
   background: transparent;
   border: 0;
-  transition: transform var(--ds-duration-fast, 0.12s) ease;
+  transition: transform var(--ds-duration-fast) var(--ds-easing-standard);
 }
 
 .caret[data-open] {
@@ -361,7 +361,8 @@
   border-radius: var(--ds-radius-full);
   box-shadow: var(--ds-shadow-md);
   transform: translateX(calc(-50% + var(--data-table-action-bar-offset, 0px)));
-  animation: data-table-action-bar-in var(--ds-duration-fast, 0.16s) ease;
+  animation: data-table-action-bar-in var(--ds-duration-fast)
+    var(--ds-easing-standard);
 }
 
 .action-bar-divider {

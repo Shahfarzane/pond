@@ -136,7 +136,7 @@
 }
 
 .item[data-highlight] {
-  animation: settings-highlight 1.6s ease-out;
+  animation: settings-highlight 1.6s var(--ds-easing-decelerate);
 }
 
 @keyframes settings-highlight {

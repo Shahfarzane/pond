@@ -62,7 +62,7 @@
   white-space: nowrap;
 
   &[data-overflow] {
-    mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+    mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
   }
 }
 
