@@ -4,12 +4,9 @@ import type { DownloadActivity } from "@shared/download-activity";
 import { useDownloadClock } from "@/features/downloads/hooks/use-download-activity";
 import type { DownloadRow } from "@/features/downloads/lib/status-feed";
 import { BrandTile } from "@/features/sources";
+import { formatBytes, formatDuration } from "@/shared/lib/format";
 import { relativeTimeFromMs } from "@/shared/lib/relative-time";
-import {
-  describeDownloadActivity,
-  formatBytes,
-  formatDuration,
-} from "../../../lib/download-progress";
+import { describeDownloadActivity } from "../../../lib/download-progress";
 import { downloadBrandSource } from "../brand";
 import { DownloadContextMenu } from "../context-menu";
 import {
@@ -253,7 +250,7 @@ function RemainingCell({ row }: { row: DownloadViewRow }) {
       value={
         seconds == null || !Number.isFinite(seconds)
           ? EMPTY_METRIC
-          : formatDuration(seconds * 1_000)
+          : formatDuration(seconds)
       }
     />
   );
@@ -270,7 +267,11 @@ function ElapsedCell({ row }: { row: DownloadViewRow }) {
   const running = row.status === "running" && row.activity?.state === "running";
   const now = useDownloadClock(Boolean(running));
   const ms = elapsedMs(row, now);
-  return <MetricCell value={ms == null ? EMPTY_METRIC : formatDuration(ms)} />;
+  return (
+    <MetricCell
+      value={ms == null ? EMPTY_METRIC : formatDuration(ms / 1_000)}
+    />
+  );
 }
 
 function activeTransfer(row: DownloadViewRow) {
