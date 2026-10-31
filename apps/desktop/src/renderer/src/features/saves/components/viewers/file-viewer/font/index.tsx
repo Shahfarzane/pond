@@ -216,7 +216,7 @@ export function FontViewer(props: ViewerProps & { url: string }) {
                 <dd>{formatBytes(props.file.size)}</dd>
               </div>
             </dl>
-            <div className={styles["info-actions"]}>
+            <div className={styles.actions}>
               {renaming ? (
                 <InlineNameEditor
                   name={props.save.title ?? props.file.family ?? "Untitled"}

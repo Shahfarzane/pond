@@ -55,7 +55,7 @@
   border-radius: var(--ds-radius-xs);
 }
 
-.library-icon {
+.icon {
   width: 100%;
   height: 100%;
   object-fit: cover;

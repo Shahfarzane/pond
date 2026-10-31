@@ -9,7 +9,7 @@
   flex-direction: column;
   gap: 28px;
 }
-.group-header {
+.header {
   padding-inline: 12px;
 }
 .panel {

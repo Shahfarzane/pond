@@ -242,7 +242,7 @@ export function HoverPreview() {
                   data-grayscale={grayscale || undefined}
                 >
                   <div
-                    className={styles["compare-media"]}
+                    className={styles.media}
                     style={{ transform: `scale(${compareZoom})` }}
                   >
                     <CardThumb save={compareA} />
@@ -253,7 +253,7 @@ export function HoverPreview() {
                   data-grayscale={grayscale || undefined}
                 >
                   <div
-                    className={styles["compare-media"]}
+                    className={styles.media}
                     style={{ transform: `scale(${compareZoom})` }}
                   >
                     <CardThumb save={compareB} />

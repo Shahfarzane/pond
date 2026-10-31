@@ -93,7 +93,7 @@ export function ConsultedSaves({
         <Popover.Portal>
           <Popover.Positioner side="top" align="start" sideOffset={8}>
             <Popover.Popup className={styles.preview}>
-              <Popover.Title className={styles["preview-title"]}>
+              <Popover.Title className={styles.heading}>
                 {item.title}
               </Popover.Title>
               <Popover.Description className={styles.description}>

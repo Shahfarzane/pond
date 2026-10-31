@@ -107,14 +107,14 @@ function Intro() {
               <li key={title} className={styles.fact}>
                 <Icon size={18} className={styles.icon} />
                 <div>
-                  <p className={styles["fact-title"]}>{title}</p>
+                  <p className={styles.heading}>{title}</p>
                   <p className={styles.text}>{text}</p>
                 </div>
               </li>
             ))}
           </ul>
           <div className={styles.rename}>
-            <p className={styles["fact-title"]}>Assistant Is Now Fish</p>
+            <p className={styles.heading}>Assistant Is Now Fish</p>
             <p className={styles.text}>
               Your Assistant chats now belong to {name}, your first fish. Add
               more fish from the sidebar, each with its own job.
