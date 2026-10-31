@@ -264,7 +264,7 @@ export function RuleDialog(props: RuleDialogProps) {
                 disabled={busy}
                 loading={busy}
               >
-                {busy ? "Saving" : editing ? "Save" : "Create"}
+                {editing ? "Save" : "Create"}
               </Button>
             </Dialog.Footer>
           </form>

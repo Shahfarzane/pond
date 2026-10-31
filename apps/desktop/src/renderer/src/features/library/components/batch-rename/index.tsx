@@ -424,7 +424,7 @@ export function BatchRenameDialog({
             >
               <Dialog.Cancel disabled={busy} />
               <Button type="submit" loading={busy}>
-                {busy ? "Renaming" : "Rename"}
+                Rename
               </Button>
             </Dialog.Footer>
           </form>

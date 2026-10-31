@@ -251,7 +251,7 @@ export function ConversionDialog({
                 loading={busy}
                 onClick={submitExport}
               >
-                {busy ? "Working" : "Export"}
+                Export
               </Button>
             )}
           </Dialog.Footer>

@@ -61,8 +61,8 @@ export function HandleForm({ label, notFound }: HandleFormProps) {
           </Field.Description>
         )}
       </Field.Root>
-      <Button type="submit" disabled={busy}>
-        {busy ? "Connecting" : "Connect"}
+      <Button type="submit" loading={busy}>
+        Connect
       </Button>
     </form>
   );

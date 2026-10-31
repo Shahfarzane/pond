@@ -13,7 +13,8 @@ export function CopyLine({ label, value }: { label: string; value: string }) {
         <Button
           size="xs"
           variant="ghost"
-          disabled={!value || copying}
+          disabled={!value}
+          loading={copying}
           onClick={() => {
             void (async () => {
               setCopying(true);
@@ -30,7 +31,7 @@ export function CopyLine({ label, value }: { label: string; value: string }) {
             })();
           }}
         >
-          {copying ? "Copying" : copied ? "Copied" : "Copy"}
+          {copied ? "Copied" : "Copy"}
         </Button>
       </div>
     </div>

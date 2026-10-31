@@ -251,7 +251,6 @@ export function MenuBridge() {
             description:
               "Pond will verify the new copy before removing the library from its current location.",
             confirmLabel: "Move",
-            busyLabel: "Moving",
             onConfirm: moveLibrary,
           });
           return;

@@ -102,8 +102,8 @@ export function SaveDialog({
             </Dialog.Content>
             <Dialog.Footer>
               <Dialog.Cancel disabled={busy} />
-              <Button type="submit" disabled={busy} loading={busy}>
-                {busy ? "Importing" : "Import"}
+              <Button type="submit" loading={busy}>
+                Import
               </Button>
             </Dialog.Footer>
           </form>
