@@ -299,7 +299,6 @@ export async function pasteTagsForSelection(
   const buf = tagClipboard.get();
   if (buf.length === 0) return;
   await addTagsToSelection(ids, buf);
-  notify({ id: "paste-tags", title: "Tags pasted" });
 }
 
 export async function openDefaultAppForSelection(
