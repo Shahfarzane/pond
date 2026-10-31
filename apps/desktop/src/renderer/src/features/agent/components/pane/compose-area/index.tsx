@@ -2,6 +2,7 @@ import type { AgentModelOptions } from "@pond/schema";
 import { Button } from "@pond/ui";
 import { ComposerView } from "@pond/ui/composer";
 import { ErrorNotice } from "@pond/ui/error-notice";
+import { useThreadScroll } from "@pond/ui/thread";
 import type { AssistantProvider, AssistantSource } from "@shared/assistant";
 import { type RefObject, useRef, useState } from "react";
 import {
@@ -63,6 +64,11 @@ export function ComposeArea({
 }: ComposeAreaProps) {
   const [dropping, setDropping] = useState(false);
   const composer = useRef<HTMLDivElement>(null);
+  const { scrollToBottom } = useThreadScroll();
+  function send(content?: string) {
+    submit(content);
+    void scrollToBottom();
+  }
   return (
     <div className={styles["compose-area"]}>
       <ResponseAnnouncement
@@ -154,7 +160,7 @@ export function ComposeArea({
           placeholder={`Message ${name}`}
           running={running}
           data-dragging={dropping || undefined}
-          onSend={() => submit()}
+          onSend={() => send()}
           onStop={assistant.stop}
           leading={
             <AddMenu
@@ -187,7 +193,7 @@ export function ComposeArea({
               attachments={state.attachments}
               anchorRef={composer}
               onChange={(value) => assistant.setDraft(value)}
-              onSend={submit}
+              onSend={send}
               onAttach={attach}
               onRemove={(id) => assistant.removeAttachment(id)}
               onDropIds={(ids) => {
