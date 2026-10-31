@@ -200,7 +200,7 @@ export function DataTableActionBar<T extends RowData>({
     <div
       className={cn(styles["action-bar"], className)}
       role="toolbar"
-      aria-label="Bulk actions"
+      aria-label="Bulk Actions"
     >
       {children instanceof Function ? children(selection) : children}
     </div>

@@ -291,7 +291,7 @@ function SpeedSelect({ className, options = SPEED_OPTIONS }: SpeedSelectProps) {
       className={cn(styles.speed, className)}
       value={state.rate}
       onChange={(event) => actions.setRate(Number(event.target.value))}
-      aria-label="Playback speed"
+      aria-label="Playback Speed"
     >
       {options.map((rate) => (
         <option key={rate} value={rate}>
