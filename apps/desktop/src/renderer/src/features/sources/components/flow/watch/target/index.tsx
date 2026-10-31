@@ -66,9 +66,11 @@ function useWatchTargetState({
   const label = watchSourceLabel(source);
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [missing, setMissing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [added, setAdded] = useState(false);
   const submitting = useRef(false);
+  const inputRef = useRef<HTMLInputElement>(null);
   const addedTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(addedTimer.current), []);
   const input = value.trim();
@@ -82,15 +84,21 @@ function useWatchTargetState({
       : null;
   const needsSession =
     WATCH_NEEDS_SESSION.includes(source) && !connectedSources.includes(source);
-  const canSubmit = !!input && !mismatch && !needsSession && !busy && !added;
+  const canSubmit = !needsSession && !busy && !added;
 
   const change = (next: string) => {
     setValue(next);
     setError(null);
+    setMissing(false);
   };
 
   const submit = async () => {
     if (!canSubmit || submitting.current) return;
+    if (!input || mismatch) {
+      setMissing(!input);
+      inputRef.current?.focus();
+      return;
+    }
     submitting.current = true;
     setBusy(true);
     setError(null);
@@ -120,11 +128,13 @@ function useWatchTargetState({
     value,
     change,
     error,
+    missing,
     mismatch,
     needsSession,
     busy,
     added,
     canSubmit,
+    inputRef,
     submit,
   };
 }
@@ -190,24 +200,32 @@ export function WatchTargetSection() {
     value,
     change,
     error,
+    missing,
     mismatch,
     needsSession,
     busy,
     added,
+    inputRef,
     submit,
   } = useWatchTarget();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const message = error ?? (value.trim() ? mismatch : null);
+  const message =
+    error ??
+    (missing
+      ? `Enter a handle or paste a ${label} link.`
+      : value.trim()
+        ? mismatch
+        : null);
   const { placeholder, kinds } = watchTargets(source);
 
   useEffect(() => {
     inputRef.current?.focus();
-  }, []);
+  }, [inputRef]);
 
   return (
     <form
       id={FORM_ID}
       className={styles.form}
+      noValidate
       onSubmit={(event) => {
         event.preventDefault();
         void submit();

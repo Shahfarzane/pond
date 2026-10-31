@@ -5,7 +5,8 @@ import {
   ConversionPresetSchema,
 } from "@shared/conversion-contracts";
 import { useSelector } from "@tanstack/react-store";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import {
   closeConversionDialog,
   type ExportMode,
@@ -57,6 +58,8 @@ export function ConversionDialog({
   const [presets, setPresets] = useState<ConversionPreset[]>([]);
   const [capabilities, setCapabilities] = useState<ConversionCapability[]>([]);
   const [conversionOptionsLoaded, setConversionOptionsLoaded] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+  const fields = useRef<HTMLFieldSetElement>(null);
   const { job, running, busy, error, setError, run, start, cancel, reset } =
     useConversionJob();
   const converting = mode === "converted";
@@ -90,6 +93,17 @@ export function ConversionDialog({
     sizeMode === "original" ||
     (sizeMode !== "height" && preset.width !== null) ||
     (sizeMode === "height" && preset.height !== null);
+  const presetValid = ConversionPresetSchema.safeParse(preset).success;
+  function submitExport() {
+    if (converting && (!sizeValid || !presetValid)) {
+      flushSync(() => setShowErrors(true));
+      fields.current
+        ?.querySelector<HTMLElement>("[aria-invalid='true']")
+        ?.focus();
+      return;
+    }
+    void start({ mode, ids: exportIds, fileIndex, preset });
+  }
   useEffect(() => {
     void ensureSaves(ids).catch(() => undefined);
   }, [ids]);
@@ -135,7 +149,11 @@ export function ConversionDialog({
           <Dialog.Description>{`Choose how to export ${count}, then select a destination.`}</Dialog.Description>
           <div className={styles.body}>
             <Dialog.Content className={styles.settings}>
-              <fieldset disabled={busy || running} className={styles.fields}>
+              <fieldset
+                ref={fields}
+                disabled={busy || running}
+                className={styles.fields}
+              >
                 <ExportField.Select
                   label="Export Type"
                   value={mode}
@@ -154,6 +172,7 @@ export function ConversionDialog({
                     presets={presets}
                     capabilities={capabilities}
                     disabled={busy || running}
+                    showErrors={showErrors}
                   />
                 ) : null}
               </fieldset>
@@ -215,11 +234,7 @@ export function ConversionDialog({
               converting ? (
                 <SavePreset
                   initialName={preset.name}
-                  disabled={
-                    busy ||
-                    running ||
-                    !ConversionPresetSchema.safeParse(preset).success
-                  }
+                  disabled={busy || running || !presetValid}
                   onSave={(name) => save({ ...preset, name })}
                 />
               ) : undefined
@@ -231,17 +246,9 @@ export function ConversionDialog({
             ) : (
               <Button
                 variant="primary"
-                disabled={
-                  busy ||
-                  exportIds.length === 0 ||
-                  (converting &&
-                    (!sizeValid ||
-                      !ConversionPresetSchema.safeParse(preset).success))
-                }
+                disabled={busy || exportIds.length === 0}
                 loading={busy}
-                onClick={() =>
-                  void start({ mode, ids: exportIds, fileIndex, preset })
-                }
+                onClick={submitExport}
               >
                 {busy ? "Working" : "Export"}
               </Button>
