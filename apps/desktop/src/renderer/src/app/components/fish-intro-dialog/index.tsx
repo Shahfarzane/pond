@@ -29,22 +29,22 @@ const CHECK_INTERVAL_MS = 3000;
 const FACTS = [
   {
     icon: IconMagnifier,
-    title: "Ask about your saves",
+    title: "Ask About Your Saves",
     text: "A fish searches your library and shows the saves it read.",
   },
   {
     icon: IconCalendar,
-    title: "Run routines",
+    title: "Run Routines",
     text: "A fish can run on a schedule or when new saves arrive.",
   },
   {
     icon: IconShieldCheck,
-    title: "Review every change",
+    title: "Review Every Change",
     text: "Anything a fish wants to change waits for your approval.",
   },
   {
     icon: IconSparkle,
-    title: "Pick the model",
+    title: "Pick the Model",
     text: "Use Apple Intelligence, your key, or a local host you run.",
   },
 ] as const;
@@ -114,7 +114,7 @@ function Intro() {
             ))}
           </ul>
           <div className={styles.rename}>
-            <p className={styles["fact-title"]}>Assistant is now Fish</p>
+            <p className={styles["fact-title"]}>Assistant Is Now Fish</p>
             <p className={styles.text}>
               Your Assistant chats now belong to {name}, your first fish. Add
               more fish from the sidebar, each with its own job.

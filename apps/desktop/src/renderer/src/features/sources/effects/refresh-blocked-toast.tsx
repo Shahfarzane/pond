@@ -58,7 +58,7 @@ export function notifyRefreshBlocked(
   const toastId = deps.notify({
     id: "refresh-blocked",
     title: `${sourceLabel(source)} needs a sign-in`,
-    action: { label: "Sign in", onClick: signIn },
+    action: { label: "Sign In", onClick: signIn },
     timeout: REFRESH_BLOCKED_TIMEOUT_MS,
   });
 }
