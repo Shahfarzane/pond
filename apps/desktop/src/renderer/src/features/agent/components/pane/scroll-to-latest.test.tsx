@@ -41,12 +41,12 @@ it("shows the icon-only latest response control only while scrolled away from th
 
     await act(async () => viewport.dispatchEvent(new Event("scroll")));
     expect(
-      host.querySelector('[aria-label="Read latest response"]'),
+      host.querySelector('[aria-label="Read Latest Response"]'),
     ).toBeNull();
 
     viewport.scrollTop = 300;
     await act(async () => viewport.dispatchEvent(new Event("scroll")));
-    const latest = host.querySelector('[aria-label="Read latest response"]');
+    const latest = host.querySelector('[aria-label="Read Latest Response"]');
     if (!(latest instanceof HTMLButtonElement))
       throw new Error("Missing latest response control");
     expect(latest.textContent).toBe("");
@@ -57,7 +57,7 @@ it("shows the icon-only latest response control only while scrolled away from th
     viewport.scrollTop = 390;
     await act(async () => viewport.dispatchEvent(new Event("scroll")));
     expect(
-      host.querySelector('[aria-label="Read latest response"]'),
+      host.querySelector('[aria-label="Read Latest Response"]'),
     ).toBeNull();
   } finally {
     await act(async () => root.unmount());

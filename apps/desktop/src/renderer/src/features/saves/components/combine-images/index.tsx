@@ -94,7 +94,7 @@ export function CombineImages({
     if (added.length === 0) {
       notify({
         id: "combine-images-drop",
-        title: "Couldn't Add Files",
+        title: "Couldn't add files",
         description: "Drag images from your library into this window.",
       });
       return;
@@ -118,7 +118,7 @@ export function CombineImages({
         if (result.reason !== "cancelled")
           notify({
             id: "combine-images",
-            title: "Couldn't Combine Images",
+            title: "Couldn't combine images",
             description: result.error ?? "Try again.",
           });
         return;
@@ -135,7 +135,7 @@ export function CombineImages({
     } catch (error) {
       notify({
         id: "combine-images",
-        title: "Couldn't Combine Images",
+        title: "Couldn't combine images",
         description: errorCopy(error, "Try again."),
       });
     } finally {

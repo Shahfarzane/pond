@@ -142,7 +142,7 @@ export function ConsultedSaves({
           aria-expanded={expanded}
           onClick={() => setExpanded(!expanded)}
         >
-          {expanded ? "Show less" : `Show ${items.length - 3} more`}
+          {expanded ? "Show Less" : `Show ${items.length - 3} More`}
         </Button>
       ) : null}
     </section>

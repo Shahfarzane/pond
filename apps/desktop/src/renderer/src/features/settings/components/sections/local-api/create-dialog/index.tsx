@@ -9,9 +9,10 @@ import { errorCopy } from "@/shared/lib/error-copy";
 import styles from "./styles.module.css";
 
 const SCOPE_DESCRIPTIONS = {
-  search: "Query, search, and read saves, files, and thumbnails",
-  export: "Convert copies. Originals stay in the library.",
-  write: "Add saves, edit tags, folders, notes, and ratings, and use Trash",
+  search: "Let connected apps search and read your saves, files, and folders.",
+  export: "Let connected apps export converted copies and compress images.",
+  write:
+    "Let connected apps add saves, edit tags, folders, notes, and ratings, and use Trash.",
 } satisfies Record<ApiTokenScope, string>;
 
 interface CreateTokenDialogProps {

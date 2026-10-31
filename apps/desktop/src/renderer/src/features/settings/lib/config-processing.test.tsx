@@ -60,7 +60,7 @@ describe("sensitive-content processing settings", () => {
     });
     expect(model).toMatchObject({
       control: "custom",
-      title: "Local Model ID",
+      title: "Local Model",
     });
     expect(provider?.visible?.(DEFAULT_PREFS.ai)).toBe(false);
     expect(model?.visible?.(DEFAULT_PREFS.ai)).toBe(false);

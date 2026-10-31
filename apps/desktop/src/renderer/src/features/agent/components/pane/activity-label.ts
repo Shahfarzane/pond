@@ -21,7 +21,7 @@ const copy = new Map<string, StepCopy>([
     { live: "Reading a Save", after: "Thinking about what it read" },
   ],
   [
-    "Grep library",
+    "Search saved text",
     { live: "Searching saved text", after: "Looking through the matches" },
   ],
   [

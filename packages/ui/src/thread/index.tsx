@@ -69,7 +69,7 @@ function ScrollToLatest({ viewport }: { viewport: HTMLElement | null }) {
   return (
     <div className={styles["scroll-action"]}>
       <Button
-        aria-label="Read latest response"
+        aria-label="Read Latest Response"
         icon
         rounding="full"
         size="xs"
