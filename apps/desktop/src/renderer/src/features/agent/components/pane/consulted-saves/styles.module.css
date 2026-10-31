@@ -39,7 +39,6 @@
 @keyframes reveal-in {
   from {
     opacity: 0;
-    filter: blur(4px);
     transform: translateY(4px);
   }
 }
@@ -139,7 +138,6 @@
 .type {
   font-family: var(--ds-code-font-family);
   font-size: var(--ds-text-xxs);
-  letter-spacing: 0.02em;
 }
 
 .expand {

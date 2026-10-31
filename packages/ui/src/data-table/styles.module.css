@@ -164,7 +164,6 @@
   content: "";
   background: transparent;
   border-radius: 1px;
-  transition: background var(--ds-duration-fast, 0.12s) ease;
 }
 
 .resize-handle:hover::after,

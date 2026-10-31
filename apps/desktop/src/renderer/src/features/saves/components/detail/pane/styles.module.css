@@ -145,7 +145,6 @@
   line-height: 1.55;
   color: var(--ds-gray-11);
   border-radius: var(--ds-radius-md);
-  transition: background var(--ds-duration-fast) var(--ds-easing-standard);
 }
 .prose :global(textarea):is(:hover, :focus) {
   background: var(--ds-gray-a2);

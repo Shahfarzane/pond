@@ -90,7 +90,6 @@
   gap: 4px;
   align-items: baseline;
   color: var(--ds-accent-11);
-  transition: color var(--ds-duration-medium) var(--ds-easing-standard);
 
   &::after {
     display: none;
