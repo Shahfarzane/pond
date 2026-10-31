@@ -72,7 +72,7 @@ export function TextFileViewer({
     } catch {
       notify({
         id: "text-encoding",
-        title: "Couldn't Convert Text",
+        title: "Couldn't convert text",
         description: "The original file is unchanged.",
       });
     } finally {
@@ -87,7 +87,7 @@ export function TextFileViewer({
     if (!result.ok && result.reason !== "cancelled")
       notify({
         id: "dotlottie-export",
-        title: "Couldn't Export dotLottie",
+        title: "Couldn't export dotLottie",
         description: result.error,
       });
   };
