@@ -74,7 +74,7 @@ type IndexLine =
   | { kind: "header"; key: string; letter: string; count: number }
   | { kind: "tags"; key: string; rows: TagData[]; groupEnd: boolean };
 
-// Mirrors the .tag-grid breakpoints in styles.module.css.
+/** Must match the .tag-grid breakpoints in styles.module.css. */
 function readColumns(): number {
   if (matchMedia("(max-width: 680px)").matches) return 1;
   if (matchMedia("(max-width: 900px)").matches) return 2;
@@ -114,12 +114,10 @@ function chunkTags(
   return lines;
 }
 
-// Only the lines near the viewport mount: every TagItem carries two menus, and
-// rendering thousands of them at once stalls the page for seconds.
-// The scroller is looked up from the list itself: a ref on the parent <main>
-// is not attached yet when the virtualizer first measures on mount.
-// The line holding focus stays mounted off screen, so an open rename editor
-// keeps its draft while the user scrolls.
+/**
+ * Every TagItem carries two menus, so mounting thousands at once stalls the page; the focused line stays mounted to keep a rename draft.
+ * @remarks The scroller comes from the list, since a ref on the parent <main> is unattached at the first measure.
+ */
 function VirtualTagIndex({ lines }: { lines: IndexLine[] }) {
   const listRef = useRef<HTMLDivElement>(null);
   const [focusedKey, setFocusedKey] = useState<string | null>(null);
