@@ -1,7 +1,7 @@
 import { useSelector } from "@tanstack/react-store";
 import { Store } from "@tanstack/store";
 
-export const PROMPT_IDS = [
+const PROMPT_IDS = [
   "cosign",
   "milestone-10000",
   "milestone-1000",
