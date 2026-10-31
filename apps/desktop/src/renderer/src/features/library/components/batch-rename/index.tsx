@@ -15,6 +15,7 @@ import {
 } from "@shared/rename-template";
 import { type ReactNode, useId, useMemo, useRef, useState } from "react";
 import { errorCopy } from "@/shared/lib/error-copy";
+import { formatPlural } from "@/shared/lib/format";
 import styles from "./styles.module.css";
 
 export interface BatchRenameItem {
@@ -202,7 +203,7 @@ export function BatchRenameDialog({
             }}
           >
             <Dialog.Header>
-              <Dialog.Title>{`Rename ${items.length.toLocaleString()} ${items.length === 1 ? noun.one : noun.other}`}</Dialog.Title>
+              <Dialog.Title>{`Rename ${formatPlural(items.length, noun)}`}</Dialog.Title>
             </Dialog.Header>
             <div className={styles.body}>
               <fieldset className={styles.options} disabled={busy}>

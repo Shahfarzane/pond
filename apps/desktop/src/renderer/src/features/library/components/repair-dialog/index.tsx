@@ -5,6 +5,7 @@ import type {
 } from "@shared/library-repair-contracts";
 import { useEffect, useState } from "react";
 import { errorCopy } from "@/shared/lib/error-copy";
+import { formatPlural } from "@/shared/lib/format";
 import styles from "./styles.module.css";
 
 const LABELS = {
@@ -134,8 +135,7 @@ export function LibraryRepairDialog({
             ) : null}
             {completed ? (
               <p className={styles.status}>
-                Repaired {job.result?.repaired ?? 0}{" "}
-                {(job.result?.repaired ?? 0) === 1 ? "Save" : "Saves"}.
+                {`Repaired ${formatPlural(job.result?.repaired ?? 0, { one: "Save", other: "Saves" })}.`}
               </p>
             ) : null}
             {preview && !completed ? (
@@ -143,7 +143,7 @@ export function LibraryRepairDialog({
                 <p className={styles.status}>
                   {count === 0
                     ? "No repairs needed."
-                    : `${count} ${count === 1 ? "Save needs" : "Saves need"} repair.`}
+                    : `${formatPlural(count, { one: "Save needs", other: "Saves need" })} repair.`}
                 </p>
                 {count > 0 ? (
                   <>

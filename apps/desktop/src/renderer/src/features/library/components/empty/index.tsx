@@ -14,6 +14,7 @@ import { libraryChrome } from "@/features/library/state/library-chrome";
 import type { SaveListMode } from "@/features/saves";
 import { openSources } from "@/features/sources";
 import { getAppRouter } from "@/shared/lib/app-router";
+import { formatPlural } from "@/shared/lib/format";
 import styles from "./styles.module.css";
 
 export function LibraryEmpty() {
@@ -108,7 +109,7 @@ export function FolderEmpty({ downloading = 0 }: { downloading?: number }) {
           <IconWindowDownloadFill size={32} />
         </Empty.Media>
         <Empty.Title>
-          Downloading {downloading} {downloading === 1 ? "save" : "saves"}
+          {`Downloading ${formatPlural(downloading, { one: "save", other: "saves" })}`}
         </Empty.Title>
         <Empty.Description>
           They appear in this folder as each download finishes.

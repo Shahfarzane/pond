@@ -13,6 +13,7 @@ import { pool } from "@/features/saves/state/pool";
 import { selection } from "@/features/saves/state/selection";
 import type { Save } from "@/features/saves/types";
 import { mergeUniqueTags, tagClipboard } from "@/features/tags";
+import { formatPlural } from "@/shared/lib/format";
 import { notify } from "@/shared/lib/toast";
 
 const OkSchema = z
@@ -52,14 +53,6 @@ const PublicUrlReplySchema = z
 export interface SelectionActionResult {
   ok: boolean;
   message: string;
-}
-
-function pluralize(
-  n: number,
-  singular: string,
-  plural = `${singular}s`,
-): string {
-  return `${n} ${n === 1 ? singular : plural}`;
 }
 
 async function resolve(ids: readonly string[]): Promise<Save[]> {
@@ -148,7 +141,10 @@ export async function copyIdsForSelection(
   }
   const ok = await writeClipboard(ids.join("\n"));
   return ok
-    ? { ok: true, message: `Copied ${pluralize(ids.length, "ID")}` }
+    ? {
+        ok: true,
+        message: `Copied ${formatPlural(ids.length, { one: "ID", other: "IDs" })}`,
+      }
     : { ok: false, message: "Couldn't copy" };
 }
 
@@ -164,7 +160,10 @@ export async function copyNamesForSelection(
   );
   const ok = await writeClipboard(names.join("\n"));
   return ok
-    ? { ok: true, message: `Copied ${pluralize(names.length, "name")}` }
+    ? {
+        ok: true,
+        message: `Copied ${formatPlural(names.length, { one: "name", other: "names" })}`,
+      }
     : { ok: false, message: "Couldn't copy" };
 }
 
@@ -179,7 +178,10 @@ export async function copyUrlsForSelection(
   }
   const ok = await writeClipboard(urls.join("\n"));
   return ok
-    ? { ok: true, message: `Copied ${pluralize(urls.length, "link")}` }
+    ? {
+        ok: true,
+        message: `Copied ${formatPlural(urls.length, { one: "link", other: "links" })}`,
+      }
     : { ok: false, message: "Couldn't copy" };
 }
 
@@ -204,7 +206,13 @@ export async function copyFilePathsForSelection(
   }
   const ok = await writeClipboard(paths.join("\n"));
   return ok
-    ? { ok: true, message: `Copied ${pluralize(paths.length, "file path")}` }
+    ? {
+        ok: true,
+        message: `Copied ${formatPlural(paths.length, {
+          one: "file path",
+          other: "file paths",
+        })}`,
+      }
     : { ok: false, message: "Couldn't copy" };
 }
 
@@ -224,7 +232,7 @@ export async function exportSelectionFiles(
     statusFeed.fail(job, "Export failed.");
     return { ok: false, message: "Export failed" };
   }
-  const message = `Exported ${pluralize(result.exported, "file")}`;
+  const message = `Exported ${formatPlural(result.exported, { one: "file", other: "files" })}`;
   statusFeed.done(job, message);
   return { ok: true, message };
 }
@@ -245,7 +253,7 @@ export async function exportSelectionCsv(
     statusFeed.fail(job, "Export failed.");
     return { ok: false, message: "Export failed" };
   }
-  const message = `Exported ${pluralize(result.count, "row")} to CSV`;
+  const message = `Exported ${formatPlural(result.count, { one: "row", other: "rows" })} to CSV`;
   statusFeed.done(job, message);
   return { ok: true, message };
 }

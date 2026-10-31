@@ -1,6 +1,7 @@
 import { Button, Dialog, Field, Input } from "@pond/ui";
 import { useRef, useState } from "react";
 import { errorCopy } from "@/shared/lib/error-copy";
+import { formatPlural } from "@/shared/lib/format";
 import { importLinks } from "../actions";
 import styles from "./styles.module.css";
 
@@ -26,7 +27,7 @@ export function SaveDialog({
       if (failed.length > 0) {
         setText(failed.join("\n"));
         setError(
-          `Couldn't import ${failed.length} link${failed.length === 1 ? "" : "s"}. Retry the remaining links.`,
+          `Couldn't import ${formatPlural(failed.length, { one: "link", other: "links" })}. Retry the remaining links.`,
         );
         return;
       }

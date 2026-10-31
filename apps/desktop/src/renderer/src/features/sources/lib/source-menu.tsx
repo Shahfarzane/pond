@@ -24,7 +24,7 @@ import { sourceTargetUrl } from "@/features/sources/lib/source-target-url";
 import { connectFlow } from "@/features/sources/state/connect-flow";
 import { sourceDetail } from "@/features/sources/state/source-detail";
 import { sourceFlow } from "@/features/sources/state/source-flow";
-import { formatNumber } from "@/shared/lib/format";
+import { formatNumber, formatPlural } from "@/shared/lib/format";
 import { notify } from "@/shared/lib/toast";
 
 export interface SourceMenuTarget {
@@ -318,7 +318,7 @@ function startSourceSignIn(
 
 function confirmRemove(target: SourceMenuTarget, onChanged: () => void): void {
   const count = target.knownCount;
-  const itemCount = `${formatNumber(count)} item${count === 1 ? "" : "s"}`;
+  const itemCount = formatPlural(count, { one: "item", other: "items" });
   if (target.type === "watch") {
     Dialog.confirm({
       title: "Stop Watching",
