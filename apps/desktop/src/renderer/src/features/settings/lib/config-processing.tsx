@@ -19,9 +19,9 @@ function MediaModelIdControl({ binding }: { binding: Binding }) {
   return (
     <>
       <Settings.ItemDetails>
-        <Settings.ItemTitle id={titleId}>Local Model ID</Settings.ItemTitle>
+        <Settings.ItemTitle id={titleId}>Local Model</Settings.ItemTitle>
         <Settings.ItemDescription id={descriptionId}>
-          The exact ID from Ollama or LM Studio.
+          Paste the model name as Ollama or LM Studio lists it.
         </Settings.ItemDescription>
       </Settings.ItemDetails>
       <Settings.ItemControl>
@@ -31,7 +31,6 @@ function MediaModelIdControl({ binding }: { binding: Binding }) {
             aria-describedby={descriptionId}
             disabled={!binding.loaded}
             value={draft}
-            placeholder="gemma4:e2b"
             onValueChange={setDraft}
             onBlur={() => {
               const value = draft.trim();
@@ -104,8 +103,8 @@ export const processingSection = defineSection("ai", {
         {
           control: "custom",
           key: "media-understanding-model-id",
-          title: "Local Model ID",
-          keywords: ["gemma", "model", "installed", "e2b", "e4b"],
+          title: "Local Model",
+          keywords: ["gemma", "model", "name", "id", "installed", "e2b", "e4b"],
           visible: (v) => v.mediaUnderstandingMode !== "florence",
           render: (binding) => <MediaModelIdControl binding={binding} />,
         },
