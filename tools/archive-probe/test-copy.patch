@@ -1,0 +1,118 @@
+diff --git a/apps/desktop/electron-builder.yml b/apps/desktop/electron-builder.yml
+index 2fd02d63..977c2f80 100644
+--- a/apps/desktop/electron-builder.yml
++++ b/apps/desktop/electron-builder.yml
+@@ -1,5 +1,5 @@
+-appId: so.pond.desktop
+-productName: Pond
++appId: so.shahin.pondarchivetest
++productName: Pond Archive Test
+ copyright: "Copyright © 2026 Raphael Salaja"
+ asar: true
+ # Native .node binaries (better-sqlite3) can't live inside the asar
+diff --git a/apps/desktop/packaging/entitlements.mac.plist b/apps/desktop/packaging/entitlements.mac.plist
+index ee8f39d0..0b3cb578 100644
+--- a/apps/desktop/packaging/entitlements.mac.plist
++++ b/apps/desktop/packaging/entitlements.mac.plist
+@@ -19,7 +19,7 @@
+        Keep in lockstep with SAFARI_APP_GROUP in packages/schema/src/native.ts. -->
+   <key>com.apple.security.application-groups</key>
+   <array>
+-    <string>7VFLYD5292.so.pond</string>
++    <string>89S32876QM.so.shahin.pondarchivetest</string>
+   </array>
+ </dict>
+ </plist>
+diff --git a/apps/desktop/share-extension/PondSocket.swift b/apps/desktop/share-extension/PondSocket.swift
+index 6ab6e4a2..2f7ff4aa 100644
+--- a/apps/desktop/share-extension/PondSocket.swift
++++ b/apps/desktop/share-extension/PondSocket.swift
+@@ -1,7 +1,7 @@
+ import Foundation
+ 
+ /// Mirrors SAFARI_APP_GROUP in packages/schema/src/native.ts and Pond's entitlements.
+-let appGroup = "7VFLYD5292.so.pond"
++let appGroup = "89S32876QM.so.shahin.pondarchivetest"
+ 
+ /// Mirrors SHARE_INBOX_DIR in packages/schema/src/native.ts.
+ let shareInboxName = "Share Inbox"
+diff --git a/apps/desktop/share-extension/share.entitlements b/apps/desktop/share-extension/share.entitlements
+index 733d421c..eaa76018 100644
+--- a/apps/desktop/share-extension/share.entitlements
++++ b/apps/desktop/share-extension/share.entitlements
+@@ -9,7 +9,7 @@
+        lockstep with SAFARI_APP_GROUP in packages/schema/src/native.ts. -->
+   <key>com.apple.security.application-groups</key>
+   <array>
+-    <string>7VFLYD5292.so.pond</string>
++    <string>89S32876QM.so.shahin.pondarchivetest</string>
+   </array>
+ </dict>
+ </plist>
+diff --git a/apps/desktop/src/main/index.ts b/apps/desktop/src/main/index.ts
+index 7924f268..aa37a2e1 100644
+--- a/apps/desktop/src/main/index.ts
++++ b/apps/desktop/src/main/index.ts
+@@ -114,7 +114,12 @@ import {
+ markStartup("modules-loaded");
+ 
+ /** Force app.name before any menu/dock work; dev falls back to "Electron" otherwise. */
+-app.setName("Pond");
++app.setName("Pond Archive Test");
++app.commandLine.appendSwitch("use-mock-keychain");
++process.env.POND_SANDBOX ??= resolvePath(
++  app.getPath("exe"),
++  "../../../../Pond Archive Test Data",
++);
+ disableMenuActionImages();
+ 
+ if (process.env.POND_SANDBOX) {
+@@ -381,8 +386,7 @@ async function postLaunchInit(): Promise<void> {
+   /** Only a signed build carries the App Group entitlement that opens the shared container. */
+   if (
+     process.platform === "darwin" &&
+-    app.isPackaged &&
+-    !process.env.POND_SANDBOX
++    app.isPackaged
+   ) {
+     /** macOS refuses the socket (EPERM) until Pond has asked for the container. */
+     if (!openAppGroupContainer(SAFARI_APP_GROUP)) {
+diff --git a/apps/extension/safari/SafariWebExtensionHandler.swift b/apps/extension/safari/SafariWebExtensionHandler.swift
+index e0796931..f37100da 100644
+--- a/apps/extension/safari/SafariWebExtensionHandler.swift
++++ b/apps/extension/safari/SafariWebExtensionHandler.swift
+@@ -34,7 +34,7 @@ private let maxResponseBytes = 1024 * 1024 - 4096
+ private let log = OSLog(subsystem: "so.pond.desktop.Extension", category: "native-host")
+ 
+ /// Mirrors SAFARI_APP_GROUP in packages/schema/src/native.ts and Pond's entitlements.
+-private let appGroup = "7VFLYD5292.so.pond"
++private let appGroup = "89S32876QM.so.shahin.pondarchivetest"
+ 
+ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
+     func beginRequest(with context: NSExtensionContext) {
+diff --git a/apps/extension/safari/extension.entitlements b/apps/extension/safari/extension.entitlements
+index e4c92736..f385f0b7 100644
+--- a/apps/extension/safari/extension.entitlements
++++ b/apps/extension/safari/extension.entitlements
+@@ -9,7 +9,7 @@
+        SAFARI_APP_GROUP in packages/schema/src/native.ts. -->
+   <key>com.apple.security.application-groups</key>
+   <array>
+-    <string>7VFLYD5292.so.pond</string>
++    <string>89S32876QM.so.shahin.pondarchivetest</string>
+   </array>
+ </dict>
+ </plist>
+diff --git a/packages/schema/src/native.ts b/packages/schema/src/native.ts
+index 4b1b708d..9ab03224 100644
+--- a/packages/schema/src/native.ts
++++ b/packages/schema/src/native.ts
+@@ -9,7 +9,7 @@ export const NATIVE_HOST_NAME = "so.pond.host";
+ export const SAFARI_HOST_NAME = "so.pond.desktop.Extension";
+ 
+ /** The sandboxed Safari extension can only reach a socket in this container; macOS requires the team ID prefix. */
+-export const SAFARI_APP_GROUP = "7VFLYD5292.so.pond";
++export const SAFARI_APP_GROUP = "89S32876QM.so.shahin.pondarchivetest";
+ 
+ /** Share extension drop folder inside the App Group container; keep in lockstep with `PondSocket.swift`. */
+ export const SHARE_INBOX_DIR = "Share Inbox";
