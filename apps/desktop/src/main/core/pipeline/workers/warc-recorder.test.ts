@@ -351,4 +351,42 @@ describe("WarcRecorder", () => {
 
     expect(records.map((r) => r.type)).toEqual(["response"]);
   });
+
+  it("keeps the real page when a bot check answers first", async () => {
+    const records = await record(async (c) => {
+      c.load(PAGE, {
+        requestId: "1",
+        url: "https://site.test/",
+        type: "Document",
+        status: 403,
+        body: "Checking your browser",
+      });
+      c.load(PAGE, {
+        requestId: "2",
+        url: "https://site.test/",
+        type: "Document",
+        body: "The real page",
+      });
+    });
+
+    expect(records.map((r) => [r.status, r.payload])).toEqual([
+      [200, "The real page"],
+    ]);
+  });
+
+  it("still keeps an error page that nothing replaces", async () => {
+    const records = await record(async (c) => {
+      c.load(PAGE, {
+        requestId: "1",
+        url: "https://site.test/gone",
+        type: "Document",
+        status: 404,
+        body: "Not found",
+      });
+    });
+
+    expect(records.map((r) => [r.status, r.payload])).toEqual([
+      [404, "Not found"],
+    ]);
+  });
 });

@@ -11,3 +11,5 @@ export function browserUserAgent(): string {
     `(KHTML, like Gecko) Chrome/${process.versions.chrome} Safari/537.36`
   );
 }
+/** Cloudflare's managed check usually passes within a few seconds; past this the page counts as blocked. */
+export const BOT_CHECK_TIMEOUT_MS = 15_000;

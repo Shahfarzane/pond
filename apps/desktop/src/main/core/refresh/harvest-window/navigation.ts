@@ -1,5 +1,5 @@
 import { setTimeout as sleep } from "node:timers/promises";
-import type { BrowserWindow } from "electron";
+import type { BrowserWindow, WebContents } from "electron";
 import log from "electron-log/main.js";
 
 export function looksLikeAuthWall(currentUrl: string): boolean {
@@ -137,4 +137,69 @@ export async function waitPastInterstitial(
     await sleep(250);
   }
   return !win.isDestroyed();
+}
+
+/** Cloudflare-style checks answer the first load with one of these and a script that reloads the page once the browser passes. */
+const BOT_CHECK_STATUSES = new Set([403, 503]);
+
+/** The HTTP status of a window's main frame, followed across reloads. */
+export interface MainFrameStatus {
+  /** Status of the latest main-frame navigation; 0 before the first. */
+  current(): number;
+  /** Resolves true at the next main-frame navigation, false when none comes within timeoutMs. */
+  nextNavigation(timeoutMs: number): Promise<boolean>;
+  stop(): void;
+}
+
+export function watchMainFrameStatus(wc: WebContents): MainFrameStatus {
+  let status = 0;
+  const waiters = new Set<(navigated: boolean) => void>();
+  const wakeAll = (navigated: boolean) => {
+    for (const wake of waiters) wake(navigated);
+    waiters.clear();
+  };
+  const onNavigate = (
+    _event: Electron.Event,
+    _url: string,
+    httpResponseCode: number,
+  ) => {
+    status = httpResponseCode;
+    wakeAll(true);
+  };
+  wc.on("did-navigate", onNavigate);
+  return {
+    current: () => status,
+    nextNavigation: (timeoutMs) =>
+      new Promise((resolve) => {
+        const timer = setTimeout(
+          () => {
+            waiters.delete(wake);
+            resolve(false);
+          },
+          Math.max(0, timeoutMs),
+        );
+        const wake = (navigated: boolean) => {
+          clearTimeout(timer);
+          resolve(navigated);
+        };
+        waiters.add(wake);
+      }),
+    stop: () => {
+      wc.off("did-navigate", onNavigate);
+      wakeAll(false);
+    },
+  };
+}
+
+/** A bot check keeps the URL and only the status gives it away, so isInterstitial can't see it. Returns the status the page settled on. */
+export async function waitPastBotCheck(
+  frame: MainFrameStatus,
+  timeoutMs: number,
+): Promise<number> {
+  const deadline = Date.now() + timeoutMs;
+  while (BOT_CHECK_STATUSES.has(frame.current())) {
+    const remaining = deadline - Date.now();
+    if (remaining <= 0 || !(await frame.nextNavigation(remaining))) break;
+  }
+  return frame.current();
 }

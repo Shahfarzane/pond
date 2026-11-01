@@ -1,7 +1,14 @@
 import { setTimeout as sleep } from "node:timers/promises";
 import { z } from "zod";
-import { NAV_TIMEOUT_MS } from "./harvest-window/constants";
-import { navigateWithTimeout } from "./harvest-window/navigation";
+import {
+  BOT_CHECK_TIMEOUT_MS,
+  NAV_TIMEOUT_MS,
+} from "./harvest-window/constants";
+import {
+  navigateWithTimeout,
+  waitPastBotCheck,
+  watchMainFrameStatus,
+} from "./harvest-window/navigation";
 import { leaseWindow } from "./harvest-window/pool";
 
 export { browserUserAgent } from "./harvest-window/constants";
@@ -19,20 +26,12 @@ export async function renderPageHtml(
   signal?: AbortSignal,
 ): Promise<RenderPageResult> {
   const lease = await leaseWindow("web", { signal });
+  const frame = watchMainFrameStatus(lease.win.webContents);
   try {
     const webContents = lease.win.webContents;
-    let status = 0;
-    const onNavigate = (_event: Electron.Event, _url: string, code: number) => {
-      status = code;
-    };
-    webContents.on("did-navigate", onNavigate);
-    let loaded: boolean;
-    try {
-      loaded = await navigateWithTimeout(lease.win, url, NAV_TIMEOUT_MS);
-    } finally {
-      webContents.off("did-navigate", onNavigate);
-    }
+    const loaded = await navigateWithTimeout(lease.win, url, NAV_TIMEOUT_MS);
     if (!loaded) return { ok: false, reason: "navigation" };
+    const status = await waitPastBotCheck(frame, BOT_CHECK_TIMEOUT_MS);
     await sleep(RENDER_SETTLE_MS);
     const html: unknown = await Promise.race([
       webContents.executeJavaScript("document.documentElement.outerHTML", true),
@@ -44,6 +43,7 @@ export async function renderPageHtml(
       ? { ok: true, html: rendered.data, status }
       : { ok: false, reason: "empty" };
   } finally {
+    frame.stop();
     lease.release();
   }
 }

@@ -244,6 +244,8 @@ export class WarcRecorder {
   private readonly responses = new Map<string, CdpResponse>();
   private readonly writtenKeys = new Set<string>();
   private readonly partialUrls = new Set<string>();
+  /** Error answers wait for stop(): a bot check answers 403 first and then reloads into the real page, which should win. */
+  private readonly heldErrors = new Map<string, PendingRecord>();
   private readonly pending = new Set<Promise<void>>();
   private writeChain: Promise<void> = Promise.resolve();
   private totalBytes = 0;
@@ -548,7 +550,13 @@ export class WarcRecorder {
   ): void {
     const key = recordKey(meta.url, request);
     if (this.writtenKeys.has(key)) return;
-    this.write({ key, meta, body, request });
+    const record = { key, meta, body, request };
+    if (meta.status >= 400) {
+      if (!this.heldErrors.has(key)) this.heldErrors.set(key, record);
+      return;
+    }
+    this.heldErrors.delete(key);
+    this.write(record);
   }
 
   private write({ key, meta, body, request }: PendingRecord): void {
@@ -663,6 +671,10 @@ export class WarcRecorder {
   }
 
   async stop(): Promise<void> {
+    await this.flush();
+    /** Nothing replaced these error answers, so they are what the site served. */
+    for (const held of this.heldErrors.values()) this.write(held);
+    this.heldErrors.clear();
     await this.flush();
     this.stopListening();
     if (this.attached) {

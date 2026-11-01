@@ -8,9 +8,12 @@ import { z } from "zod";
 import type { TransferOptions } from "../../../lib/download-transfer";
 import { saveFile } from "../../../paths";
 import { persistSave } from "../../persist-save";
+import { BOT_CHECK_TIMEOUT_MS } from "../../refresh/harvest-window/constants";
 import {
   looksLikeAuthWall,
   navigateWithTimeout,
+  waitPastBotCheck,
+  watchMainFrameStatus,
 } from "../../refresh/harvest-window/navigation";
 import { leaseWindow } from "../../refresh/harvest-window/pool";
 import {
@@ -224,6 +227,7 @@ async function crawlSite(
   };
   if (opts.partition) leaseOptions.partition = opts.partition;
   const lease = await leaseWindow("web", leaseOptions);
+  const frame = watchMainFrameStatus(lease.win.webContents);
   log.info("[pond pipeline:archive-page] window leased", { ms: elapsed() });
   const tmpDir = await mkdtemp(join(tmpdir(), "pond-archive-"));
   const warcPath = join(tmpDir, ARCHIVE_WARC_FILENAME);
@@ -291,6 +295,16 @@ async function crawlSite(
         });
         continue;
       }
+      const firstStatus = frame.current();
+      const status = await waitPastBotCheck(frame, BOT_CHECK_TIMEOUT_MS);
+      if (status !== firstStatus) {
+        log.info("[pond pipeline:archive-page] passed bot check", {
+          url: next.url,
+          from: firstStatus,
+          to: status,
+          ms: elapsed(),
+        });
+      }
       await sleep(SETTLE_MS);
       await autoScroll(lease.win.webContents);
       await preloadImages(lease.win.webContents);
@@ -344,6 +358,7 @@ async function crawlSite(
         log.warn("[pond pipeline:archive-page] recorder stop failed", err);
       }
     }
+    frame.stop();
     lease.release();
     log.info("[pond pipeline:archive-page] crawl done", {
       pages: pages.length,
