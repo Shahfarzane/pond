@@ -1,3 +1,4 @@
+import { POND_PROTOCOL, REPLAY_HOST } from "@shared/constants";
 import { z } from "zod";
 import { buildPondUrl } from "@/features/saves/lib/media/url";
 import type { Save, SaveFile } from "@/features/saves/types";
@@ -83,7 +84,7 @@ export function buildArchiveViewerUrl(
   const source = `pond://${save.id}/${warc.path}`;
   const coll = `${save.id}-${manifest.archivedAt.replace(/[^0-9]/g, "")}`;
   const params = new URLSearchParams({ source, url: pageUrl, coll });
-  return `pond://_replay/index.html?${params.toString()}`;
+  return `${POND_PROTOCOL}://${REPLAY_HOST}/index.html?${params.toString()}`;
 }
 
 export function archiveUrlKey(url: string): string {

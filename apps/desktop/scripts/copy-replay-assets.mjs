@@ -1,5 +1,5 @@
 /**
- * Puts the replaywebpage viewer bundles next to the committed index.html that pond://_replay serves.
+ * Puts the replaywebpage viewer bundles next to the committed index.html that pond://replay serves.
  */
 import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { createRequire } from "node:module";

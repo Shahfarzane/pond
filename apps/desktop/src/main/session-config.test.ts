@@ -29,7 +29,7 @@ describe("grantsPermission", () => {
     { ...appRequest, permission: "notifications" },
     { ...appRequest, isMainFrame: false },
     { ...appRequest, requestingUrl: "https://x.com/home" },
-    { ...appRequest, requestingUrl: "pond://_replay/index.html" },
+    { ...appRequest, requestingUrl: "pond://replay/index.html" },
     { ...appRequest, requestingUrl: "http://localhost:5173/index.html" },
   ])("denies %o", (request) => {
     expect(grantsPermission(request)).toBe(false);

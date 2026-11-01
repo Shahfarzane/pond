@@ -5,7 +5,7 @@ import { Readable } from "node:stream";
 import { app, net, protocol } from "electron";
 import log from "electron-log/main.js";
 import mime from "mime-types";
-import { POND_PROTOCOL } from "../shared/constants";
+import { POND_PROTOCOL, REPLAY_HOST } from "../shared/constants";
 import {
   libraryMediaMetadata,
   readLibraryMediaRange,
@@ -25,7 +25,6 @@ const ONE_YEAR_SECONDS = 31_536_000;
 const META_HOST = "_meta";
 const META_DIR = "_meta";
 
-const REPLAY_HOST = "_replay";
 const REPLAY_ASSETS = new Map([
   ["index.html", "index.html"],
   ["ui.js", "ui.js"],
@@ -54,7 +53,7 @@ export function registerScheme() {
         supportFetchAPI: true,
         stream: true,
         corsEnabled: true,
-        /** wabac.js replays archives through a service worker registered from pond://_replay. */
+        /** wabac.js replays archives through a service worker registered from pond://replay. */
         allowServiceWorkers: true,
       },
     },

@@ -16,6 +16,12 @@ export const KEYCHAIN_AGENT_PREFIX = "agent";
 
 export const POND_PROTOCOL = "pond";
 
+/**
+ * Serves the archive viewer and wabac's service worker. wabac allows frames from this origin in each replayed page's CSP,
+ * and CSP drops a host with an underscore, which would block every archived iframe.
+ */
+export const REPLAY_HOST = "replay";
+
 export const IPC = {
   tx: "pond:tx",
   txBatch: "pond:tx-batch",
