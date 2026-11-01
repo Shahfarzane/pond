@@ -51,7 +51,7 @@ const ARCHIVE_KIND = "archive";
 const ARCHIVE_MANIFEST_KIND = "archive_manifest";
 const ARCHIVE_MANIFEST_FILENAME = "archive-manifest.json";
 const ARCHIVE_WARC_FILENAME = "archive.warc.gz";
-export const ARCHIVE_VERSION = 9;
+export const ARCHIVE_VERSION = 10;
 
 export type ArchiveScope = "page" | "site";
 
