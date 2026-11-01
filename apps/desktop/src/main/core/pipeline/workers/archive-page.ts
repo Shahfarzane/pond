@@ -141,11 +141,20 @@ export async function runArchivePage(
     return;
   }
 
-  const result = await crawlSite(rootUrl, scope, ctx.signal, {
-    partition: hasCookies ? pageCookiePartition(saveId) : undefined,
-    cookies,
-    reportActivity: ctx.reportActivity,
-  });
+  const result = await crawlWithCookieFallback(hasCookies, (withCookies) =>
+    crawlSite(
+      rootUrl,
+      scope,
+      ctx.signal,
+      withCookies
+        ? {
+            partition: pageCookiePartition(saveId),
+            cookies,
+            reportActivity: ctx.reportActivity,
+          }
+        : { reportActivity: ctx.reportActivity },
+    ),
+  );
   if (result.pages.length === 0 || result.warcBytes.byteLength === 0) {
     throw new TransientError("archive_page: no pages captured");
   }
@@ -196,9 +205,26 @@ export async function runArchivePage(
   dropPageCookies(saveId);
 }
 
-interface CrawlResult {
+export interface CrawlResult {
   pages: ArchiveManifestPage[];
   warcBytes: Buffer;
+  /** The first page redirected to a sign-in form instead of the saved page. */
+  landedOnSignIn: boolean;
+}
+
+/** Tab cookies that lead to a sign-in form capture nothing the user saw; the page without them beats no archive. */
+export async function crawlWithCookieFallback(
+  hasCookies: boolean,
+  crawl: (withCookies: boolean) => Promise<CrawlResult>,
+): Promise<CrawlResult> {
+  const result = await crawl(hasCookies);
+  if (!hasCookies || result.pages.length > 0 || !result.landedOnSignIn) {
+    return result;
+  }
+  log.info(
+    "[pond pipeline:archive-page] tab cookies led to a sign-in page, retrying without them",
+  );
+  return crawl(false);
 }
 
 async function crawlSite(
@@ -240,6 +266,7 @@ async function crawlSite(
 
   let recorder: WarcRecorder | null = null;
   let navAttempts = 0;
+  let landedOnSignIn = false;
   try {
     /** A never-loaded window has no renderer process, so CDP commands never resolve; boot one before attaching the debugger. */
     if (!lease.win.webContents.getURL()) {
@@ -321,7 +348,15 @@ async function crawlSite(
       const finalUrl = wc.getURL();
       const finalKey = dedupeKey(finalUrl);
       if (capturedKeys.has(finalKey)) continue;
-      if (looksLikeAuthWall(finalUrl)) continue;
+      if (looksLikeAuthWall(finalUrl)) {
+        log.info("[pond pipeline:archive-page] skipped sign-in page", {
+          url: next.url,
+          landedOn: finalUrl,
+          ms: elapsed(),
+        });
+        if (next.depth === 0) landedOnSignIn = true;
+        continue;
+      }
 
       const harvest = await harvestPage(wc);
       if (!harvest) {
@@ -374,7 +409,7 @@ async function crawlSite(
   } finally {
     void rm(tmpDir, { recursive: true, force: true }).catch(() => {});
   }
-  return { pages, warcBytes };
+  return { pages, warcBytes, landedOnSignIn };
 }
 
 async function preloadImages(wc: WebContents): Promise<void> {
