@@ -1,6 +1,6 @@
 import { once } from "node:events";
 import { createWriteStream, type WriteStream } from "node:fs";
-import type { JsonValue } from "@pond/schema/json";
+import type { JsonObject, JsonValue } from "@pond/schema/json";
 import type { WebContents } from "electron";
 import log from "electron-log/main.js";
 import { WARCRecord, WARCSerializer } from "warcio";
@@ -35,6 +35,51 @@ export async function withTimeout<T>(
     clearTimeout(timer);
     promise.catch(() => {});
   }
+}
+
+type CdpEventListener = (
+  method: string,
+  params: JsonValue,
+  sessionId: string | undefined,
+) => void;
+
+/** The parts of a WebContents the recorder drives, so tests can stand in for Chromium. */
+export interface CdpTarget {
+  attach(): void;
+  detach(): void;
+  send(
+    method: string,
+    params?: JsonObject,
+    sessionId?: string,
+  ): Promise<JsonValue>;
+  onEvent(listener: CdpEventListener): () => void;
+  fetch(url: string, init: { signal: AbortSignal }): Promise<Response>;
+}
+
+export function cdpTargetFor(wc: WebContents): CdpTarget {
+  const dbg = wc.debugger;
+  return {
+    attach: () => {
+      if (!dbg.isAttached()) dbg.attach("1.3");
+    },
+    detach: () => dbg.detach(),
+    send: (method, params, sessionId) =>
+      dbg.sendCommand(method, params ?? {}, sessionId),
+    onEvent: (listener) => {
+      const onMessage = (
+        _event: Electron.Event,
+        method: string,
+        params: JsonValue,
+        sessionId: string,
+      ) => {
+        /** Electron reports the page's own session as "". */
+        listener(method, params, sessionId || undefined);
+      };
+      dbg.on("message", onMessage);
+      return () => dbg.off("message", onMessage);
+    },
+    fetch: (url, init) => wc.session.fetch(url, init),
+  };
 }
 
 const CdpResponseSchema = z.object({
@@ -104,7 +149,7 @@ function toHttpHeaders(
 }
 
 export class WarcRecorder {
-  private readonly wc: WebContents;
+  private readonly target: CdpTarget;
   private readonly stream: WriteStream;
   private readonly responses = new Map<string, CdpResponse>();
   private readonly writtenUrls = new Set<string>();
@@ -115,21 +160,24 @@ export class WarcRecorder {
   private reservedBytes = 0;
   private attached = false;
   private lastNetworkActivity = Date.now();
+  private stopListening: () => void = () => {};
 
-  private constructor(wc: WebContents, filePath: string) {
-    this.wc = wc;
+  private constructor(target: CdpTarget, filePath: string) {
+    this.target = target;
     this.stream = createWriteStream(filePath);
   }
 
-  static async start(wc: WebContents, filePath: string): Promise<WarcRecorder> {
-    const recorder = new WarcRecorder(wc, filePath);
-    const dbg = wc.debugger;
-    if (!dbg.isAttached()) dbg.attach("1.3");
+  static async start(
+    target: CdpTarget,
+    filePath: string,
+  ): Promise<WarcRecorder> {
+    const recorder = new WarcRecorder(target, filePath);
+    target.attach();
     recorder.attached = true;
-    dbg.on("message", recorder.onMessage);
+    recorder.stopListening = target.onEvent(recorder.onEvent);
     try {
       await withTimeout(
-        dbg.sendCommand("Network.enable", {
+        target.send("Network.enable", {
           maxTotalBufferSize: 200_000_000,
           maxResourceBufferSize: 60_000_000,
         }),
@@ -137,7 +185,7 @@ export class WarcRecorder {
       );
       /** Cached responses have no retrievable body over CDP; forcing network keeps the capture complete. */
       await withTimeout(
-        dbg.sendCommand("Network.setCacheDisabled", { cacheDisabled: true }),
+        target.send("Network.setCacheDisabled", { cacheDisabled: true }),
         CDP_TIMEOUT_MS,
       );
       /**
@@ -146,7 +194,7 @@ export class WarcRecorder {
        */
       const interceptedTypes = ["Document", "Stylesheet", "Script", "Font"];
       await withTimeout(
-        dbg.sendCommand("Fetch.enable", {
+        target.send("Fetch.enable", {
           patterns: interceptedTypes.map((resourceType) => ({
             requestStage: "Response",
             resourceType,
@@ -155,9 +203,9 @@ export class WarcRecorder {
         CDP_TIMEOUT_MS,
       );
     } catch (err) {
-      dbg.off("message", recorder.onMessage);
+      recorder.stopListening();
       try {
-        dbg.detach();
+        target.detach();
       } catch {}
       recorder.attached = false;
       recorder.stream.destroy();
@@ -166,11 +214,7 @@ export class WarcRecorder {
     return recorder;
   }
 
-  private onMessage = (
-    _event: Electron.Event,
-    method: string,
-    params: JsonValue,
-  ): void => {
+  private onEvent = (method: string, params: JsonValue): void => {
     try {
       if (method.startsWith("Network.")) {
         this.lastNetworkActivity = Date.now();
@@ -235,7 +279,7 @@ export class WarcRecorder {
       ) {
         const res = CdpBodySchema.parse(
           await withTimeout(
-            this.wc.debugger.sendCommand("Fetch.getResponseBody", {
+            this.target.send("Fetch.getResponseBody", {
               requestId: p.requestId,
             }),
             CDP_TIMEOUT_MS,
@@ -264,7 +308,7 @@ export class WarcRecorder {
     } finally {
       try {
         await withTimeout(
-          this.wc.debugger.sendCommand("Fetch.continueRequest", {
+          this.target.send("Fetch.continueRequest", {
             requestId: p.requestId,
           }),
           CDP_TIMEOUT_MS,
@@ -283,9 +327,7 @@ export class WarcRecorder {
     try {
       const res = CdpBodySchema.parse(
         await withTimeout(
-          this.wc.debugger.sendCommand("Network.getResponseBody", {
-            requestId,
-          }),
+          this.target.send("Network.getResponseBody", { requestId }),
           CDP_TIMEOUT_MS,
         ),
       );
@@ -372,7 +414,7 @@ export class WarcRecorder {
   private async captureFullBody(url: string): Promise<void> {
     if (this.writtenUrls.has(url) || this.remainingCaptureBudget() === 0)
       return;
-    const res = await this.wc.session.fetch(url, {
+    const res = await this.target.fetch(url, {
       signal: AbortSignal.timeout(FULL_BODY_TIMEOUT_MS),
     });
     if (res.status !== 200) {
@@ -417,23 +459,22 @@ export class WarcRecorder {
 
   async stop(): Promise<void> {
     await this.flush();
-    const dbg = this.wc.debugger;
-    dbg.off("message", this.onMessage);
+    this.stopListening();
     if (this.attached) {
       try {
         await withTimeout(
           (async () => {
-            await dbg.sendCommand("Fetch.disable");
-            await dbg.sendCommand("Network.setCacheDisabled", {
+            await this.target.send("Fetch.disable");
+            await this.target.send("Network.setCacheDisabled", {
               cacheDisabled: false,
             });
-            await dbg.sendCommand("Network.disable");
+            await this.target.send("Network.disable");
           })(),
           CDP_TIMEOUT_MS,
         );
       } catch {}
       try {
-        dbg.detach();
+        this.target.detach();
       } catch {}
       this.attached = false;
     }

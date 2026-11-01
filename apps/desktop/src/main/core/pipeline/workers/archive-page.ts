@@ -26,7 +26,7 @@ import {
 } from "../page-cookies";
 import type { WriteFileArgs } from "./apply";
 import { readSave } from "./apply";
-import { WarcRecorder, withTimeout } from "./warc-recorder";
+import { cdpTargetFor, WarcRecorder, withTimeout } from "./warc-recorder";
 
 const ARCHIVE_MAX_PAGES = 25;
 const ARCHIVE_MAX_DEPTH = 2;
@@ -262,7 +262,10 @@ async function crawlSite(
         skipped: written.skipped,
       });
     }
-    recorder = await WarcRecorder.start(lease.win.webContents, warcPath);
+    recorder = await WarcRecorder.start(
+      cdpTargetFor(lease.win.webContents),
+      warcPath,
+    );
     log.info("[pond pipeline:archive-page] recorder started", {
       ms: elapsed(),
     });
